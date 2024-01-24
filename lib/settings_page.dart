@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'edit_screen.dart';
+import 'package:logger/logger.dart';
+import 'profile_page.dart';
 import 'forward_button.dart';
 import 'setting_item.dart';
 import 'setting_switch.dart';
@@ -14,6 +16,21 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   bool isDarkMode = false;
+
+  final Logger logger = Logger();
+
+  void _logout(BuildContext context) async {
+    try {
+      // Sign out the user
+      await FirebaseAuth.instance.signOut();
+
+      // After signing out, navigate to the login page or any other page
+      Navigator.pushReplacementNamed(context, 'signin');
+    } catch (e) {
+      logger.i('Error during logout: $e');
+      // Handle errors, if any, during logout
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +97,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const EditAccountScreen(),
+                              builder: (context) =>  const EditAccountScreen(),
                             ),
                           );
                         },
@@ -134,6 +151,27 @@ class _AccountScreenState extends State<AccountScreen> {
                   iconColor: Colors.red,
                   onTap: () {},
                 ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+
+                    ElevatedButton(
+                      onPressed: () {
+                        _logout(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                      ),
+
+                      child: const Text("Logout"),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

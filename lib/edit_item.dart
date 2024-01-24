@@ -19,8 +19,9 @@ class EditItem extends StatelessWidget {
           child: Text(
             title,
             style: const TextStyle(
+              color: Colors.black,
               fontSize: 18,
-              color: Colors.grey,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),

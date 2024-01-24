@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smartparkin1/invoice.dart';
 import 'package:upi_india/upi_india.dart';
 import 'package:logger/logger.dart';
 
@@ -25,77 +26,76 @@ class _PaymentScreenState extends State<PaymentScreen> {
     fontSize: 18,
     fontWeight: FontWeight.w400,
   );
+
   @override
-  void initState(){
-    _upiIndia.getAllUpiApps(mandatoryTransactionId: false).then((value){
+  void initState() {
+    _upiIndia.getAllUpiApps(mandatoryTransactionId: false).then((value) {
       setState(() {
         apps = value;
       });
-    }).catchError((e){
+    }).catchError((e) {
       logger.i("Error fetching UPI apps: $e");
       apps = [];
     });
     super.initState();
   }
 
-Future<UpiResponse> initiateTransaction(UpiApp app) async {
+  Future<UpiResponse> initiateTransaction(UpiApp app) async {
     return _upiIndia.startTransaction(
-        app: app,
-        receiverUpiId: "8106344345@ibl",
-        receiverName: "M ABHISHEK",
-        transactionRefId: "Park_Hub",
+      app: app,
+      receiverUpiId: "8106344345@ibl",
+      receiverName: "M ABHISHEK",
+      transactionRefId: "Park_Hub",
       transactionNote: "Parking amount",
-      amount: 1000,
+      amount: 1,
     );
-}
+  }
 
-Widget displayUpiApps() {
-  if (apps == null) {
-    return const Center(child: CircularProgressIndicator());
-  }
-  else if (apps!.isEmpty) {
-    return Center(
-      child: Text(
-        "No Apps found to handle transaction.",
-        style: header,
-      ),
-    );
-  }
-  else {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Wrap(
-          children: apps!.map<Widget>((UpiApp app) {
-            return GestureDetector(
-              onTap: () {
-                _transaction = initiateTransaction(app);
-                setState(() {});
-              },
-              child: SizedBox(
-                height: 150,
-                width: 150,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Image.memory(
-                      app.icon,
-                      height: 100,
-                      width: 100,
-                    ),
-                    Text(app.name),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
+  Widget displayUpiApps() {
+    if (apps == null) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (apps!.isEmpty) {
+      return Center(
+        child: Text(
+          "No Apps found to handle transaction.",
+          style: header,
         ),
-      ),
-    );
+      );
+    } else {
+      return Align(
+        alignment: Alignment.topCenter,
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Wrap(
+            children: apps!.map<Widget>((UpiApp app) {
+              return GestureDetector(
+                onTap: () {
+                  _transaction = initiateTransaction(app);
+                  setState(() {});
+                },
+                child: SizedBox(
+                  height: 150,
+                  width: 150,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Image.memory(
+                        app.icon,
+                        height: 100,
+                        width: 100,
+                      ),
+                      Text(app.name),
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      );
+    }
   }
-}
 
   String _upiErrorHandler(error) {
     switch (error) {
@@ -112,98 +112,181 @@ Widget displayUpiApps() {
     }
   }
 
-  void _checkTxnStatus(String status){
-    switch(status){
-      case UpiPaymentStatus.SUCCESS: logger.i("Transaction Successful");
-      break;
-      case UpiPaymentStatus.SUBMITTED: logger.i("Transaction Submitted");
-      break;
-      case UpiPaymentStatus.FAILURE: logger.i("Transaction Failed");
-      break;
-      default:logger.i("Received an unknown transaction status");
+  void _checkTxnStatus(String status) {
+    switch (status) {
+      case UpiPaymentStatus.SUCCESS:
+        logger.i("Transaction Successful");
+        break;
+      case UpiPaymentStatus.SUBMITTED:
+        logger.i("Transaction Submitted");
+        break;
+      case UpiPaymentStatus.FAILURE:
+        logger.i("Transaction Failed");
+        break;
+      default:
+        logger.i("Received an unknown transaction status");
     }
   }
 
-  Widget displayTransactionData(title,body){
+  Widget displayTransactionData(title, body) {
     return Padding(
-        padding: const EdgeInsets.all(8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text("$title: ",style: header),
-        Flexible(
-            child:Text(
-              body,
-              style: value,
-            )
-        ),
-      ],
-    ),
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "$title: ",
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          Text(
+            body,
+            style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        title: const Text("Payments",style: TextStyle(color: Colors.white),),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue.shade900, Colors.blue.shade500],
+            ),
+          ),
+        ),
+        title: const Text(
+          "Make Payment",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Column(
         children: <Widget>[
-          Expanded(child: displayUpiApps()),
           Expanded(
-              child:FutureBuilder(
-                future: _transaction,
-                builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot){
-
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-
-
-                  if (snapshot.connectionState == ConnectionState.done){
-                    if(snapshot.hasError){
-                      return Center(
-                        child: Text(
-                          _upiErrorHandler(snapshot.error.runtimeType),
-                          style: header,
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+              itemCount: apps!.length,
+              itemBuilder: (context, index) {
+                return GestureDetector(
+                  onTap: () {
+                    _transaction = initiateTransaction(apps![index]);
+                    setState(() {});
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.memory(
+                          apps![index].icon,
+                          height: 80,
+                          width: 80,
                         ),
-                      );
-                    }
-                    UpiResponse upiResponse = snapshot.data!;
+                        const SizedBox(height: 20),
+                        Text(
+                          apps![index].name,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          Expanded(
+            child: FutureBuilder(
+              future: _transaction,
+              builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                    String txnId = upiResponse.transactionId ?? "N/A";
-                    String resCode = upiResponse.responseCode ?? "N/A";
-                    String txnRef = upiResponse.transactionRefId ?? "N/A";
-                    String status = upiResponse.status ?? "N/A";
-                    String approvalRef = upiResponse.approvalRefNo ?? "N/A";
-                    _checkTxnStatus(status);
-                    
-                    
-                    return Padding(
-                        padding:const EdgeInsets.all(8.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          displayTransactionData("Transaction Id",txnId),
-                          displayTransactionData("Response Code",resCode),
-                          displayTransactionData("Reference Id",txnRef),
-                          displayTransactionData("Status",status.toUpperCase()),
-                          displayTransactionData("Approval No",approvalRef),
-                        ],
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        _upiErrorHandler(snapshot.error.runtimeType),
+                        style: header,
                       ),
                     );
                   }
-                  else{
-                    return const Center(
-                      child: Text(""),
-                    );
-                  }
-                },
-              ))
+                  UpiResponse upiResponse = snapshot.data!;
+
+                  String txnId = upiResponse.transactionId ?? "N/A";
+                  String resCode = upiResponse.responseCode ?? "N/A";
+                  String txnRef = upiResponse.transactionRefId ?? "N/A";
+                  String status = upiResponse.status ?? "N/A";
+                  String approvalRef = upiResponse.approvalRefNo ?? "N/A";
+                  _checkTxnStatus(status);
+
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        displayTransactionData("Transaction Id", txnId),
+                        displayTransactionData("Response Code", resCode),
+                        displayTransactionData("Reference Id", txnRef),
+                        displayTransactionData("Status", status.toUpperCase()),
+                        displayTransactionData("Approval No", approvalRef),
+                      ],
+                    ),
+                  );
+                } else {
+                  return const Center(
+                    child: Text(""),
+                  );
+                }
+              },
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Navigate to the Invoice screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => InvoicePage(
+                    invoiceNumber: '12345',
+                    invoiceDate: DateTime.now(),
+                    lot: 'A',
+                    slot: 'B',
+                    reservedHours: 2,
+                    reservedDate: DateTime.now().add(const Duration(days: 1)),
+                    totalAmount: 180.0,
+                    vehicleType: 'Car',
+                    vehicleNumber: 'ABC123',
+                    customerName: 'John Doe',
+                    mobile: '123-456-7890',
+                    paymentMethod: 'Credit Card',
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue.shade900,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            child: const Text('Invoice'),
+          ),
+
+          const SizedBox(height: 80,)
         ],
       ),
     );

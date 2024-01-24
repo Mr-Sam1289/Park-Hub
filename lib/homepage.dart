@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:smartparkin1/MapsPage.dart';
-import 'account_screen.dart';
+import 'settings_page.dart';
 import 'mybookings.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +85,10 @@ class HomePage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) =>  const MyBookingsPage()));
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>  const MyBookingsPage()));
                       },
                       child: Container(
                         width: double.infinity,
@@ -119,7 +125,13 @@ class HomePage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountScreen()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AccountScreen(),
+                          ),
+                        );
+
                       },
                       child: Container(
                         width: double.infinity,

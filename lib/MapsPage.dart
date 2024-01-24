@@ -1,5 +1,7 @@
 import 'dart:async';
-
+import 'package:ionicons/ionicons.dart';
+import 'package:logger/logger.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
@@ -7,10 +9,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:smartparkin1/HomePage.dart';
 import 'package:smartparkin1/dateandtime.dart';
 
-import 'HomePage.dart';
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -20,93 +21,131 @@ class MapsPage extends StatefulWidget {
 }
 
 const kGoogleApiKey = 'AIzaSyCQCrWhfNM2AnegyOq4C6v9FxJeNPovA6M';
+final Logger logger = Logger();
 
 class MapsPageState extends State<MapsPage> {
-
-
   final Completer<GoogleMapController> _controller = Completer();
   final homeScaffoldKey = GlobalKey<ScaffoldState>();
+  late GoogleMapController googleMapController;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(17.39587287558397, 78.62196950902965),
     zoom: 16,
   );
 
-  List<Marker> marker = [];
   Set<Marker> markersList = {};
-  late GoogleMapController googleMapController;
 
+  Future<void> fetchMarkersFromFirestoreForAllUsers() async {
+    try {
+      QuerySnapshot locationsSnapshot = await FirebaseFirestore.instance
+          .collection('Lot Locations')
+          .get();
 
-  Marker createMarker(String markerId, double lat, double lng, String title) {
-    var mid = markerId;
-    return Marker(
-      markerId: MarkerId(markerId),
-      position: LatLng(lat, lng),
-      onTap: () {
-        // Access context and call _showSlideUpModal
-        _showSlideUpModal(context,mid);
-      },
-      infoWindow: InfoWindow(
-        title: title,
-      ),
-    );
+      for (QueryDocumentSnapshot docSnapshot in locationsSnapshot.docs) {
+        double latitude = docSnapshot['latitude'];
+        double longitude = docSnapshot['longitude'];
+        String name = docSnapshot['name'];
+        String markerId = docSnapshot.id;
+
+        markersList.add(
+          Marker(
+            markerId: MarkerId(markerId),
+            position: LatLng(latitude, longitude),
+            onTap: () {
+              _showSlideUpModal(context, markerId, name);
+            },
+            infoWindow: InfoWindow(
+              title: name,
+            ),
+          ),
+        );
+      }
+
+      setState(() {});
+    } catch (error) {
+      logger.i('Error fetching markers from Firestore: $error');
+    }
   }
 
-  // Parking Lot Details Slide
-  void _showSlideUpModal(BuildContext context,String mid) {
-    String parkingLotDetailsText = 'Parking Lot Details';
+  Future<Map<String, dynamic>> fetchSlotDetailsFromFirestore(String markerId) async {
+    try {
+      DocumentSnapshot lotDetailsSnapshot = await FirebaseFirestore.instance
+          .collection('Lot Details')
+          .doc(markerId)
+          .get();
 
-    if (mid == '1') {
-      parkingLotDetailsText = 'Keshav Memorial Engineering College';
-
-    } else if (mid == '2') {
-      parkingLotDetailsText = 'Neil Gogte Institute of Technology';
-
-    } else if (mid == '3') {
-      parkingLotDetailsText = 'Anjanadri Gated Community';
-
-    } else if (mid == '4') {
-      parkingLotDetailsText = 'GSR Constructions';
-
-    } else if (mid == '5') {
-      parkingLotDetailsText = 'SPANZ VILLA';
-
+      if (lotDetailsSnapshot.exists) {
+        return lotDetailsSnapshot.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (error) {
+      logger.i('Error fetching slot details from Firestore: $error');
+      return {};
     }
+  }
+
+
+  Future<void> _showSlideUpModal(BuildContext context, String markerId, String userName) async {
+
+    final localContext = context;
+
+    Map<String, dynamic> slotDetails = await fetchSlotDetailsFromFirestore(markerId);
+
+    String parkingLotDetailsText = userName;
+
     showModalBottomSheet(
-      context: context,
+      context: localContext,
       builder: (BuildContext context) {
         return Container(
-          width: 370.0,
-          height: 350.0,
           padding: const EdgeInsets.all(16.0),
           decoration: const BoxDecoration(
-            color: Colors.white,
+            color: Colors.transparent,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              Container(
+                width: 100.0,
+                height: 100.0,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.grey,  // Replace with your desired border color
+                    width: 2.0,         // Replace with your desired border width
+                  ),
+                ),
+                child: const CircleAvatar(
+                  radius: 50.0,
+                  backgroundImage: AssetImage('assets/images/lot_image.jpg'), // Replace with your parking lot image
+                ),
+              ),
+              const SizedBox(height: 16.0),
               Text(
                 parkingLotDetailsText,
                 style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 20.0),
-              const Text(
-                'Slots available: 7\n'
-                    'Slots booked: 3\n'
-                    'Total slots: 10',
-                style: TextStyle(fontSize: 18.0),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildInfoItem(Icons.check_circle, 'Slots available', slotDetails['slotsAvailable'].toString(), Colors.green),
+                  _buildInfoItem(Icons.event_busy, 'Slots booked', slotDetails['slotsBooked'].toString(), Colors.red),
+                  _buildInfoItem(Icons.format_list_numbered, 'Total slots', slotDetails['totalSlots'].toString(), Colors.blue),
+                ],
               ),
               const SizedBox(height: 30.0),
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ParkingApp()),
+                    MaterialPageRoute(builder: (context) => const DateAndTime()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
                   minimumSize: const Size(120.0, 40.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
@@ -114,7 +153,7 @@ class MapsPageState extends State<MapsPage> {
                 ),
                 child: const Text(
                   'Next',
-                  style: TextStyle(fontSize: 18.0, color: Colors.white),
+                  style: TextStyle(fontSize: 18.0),
                 ),
               ),
             ],
@@ -124,40 +163,25 @@ class MapsPageState extends State<MapsPage> {
     );
   }
 
-  late List<Marker> _list;
-  MapsPageState() {
-    _list = <Marker>[
-      createMarker('1', 17.397051466500752, 78.62260698257549, 'Keshav Memorial Engineering College'),
-      createMarker('2', 17.39587287558397, 78.62196950902965, 'Neil Gogte Institute of Technology'),
-      createMarker('3', 17.391181833373288, 78.62386301538935, 'Anjanadri Gated Community'),
-      createMarker('4', 17.392994279278522, 78.61877946152602, 'GSR Constructions'),
-      createMarker('5', 17.390044558956642, 78.6189778310192, 'SPANZ VILLA'),
-    ];
+  Widget _buildInfoItem(IconData icon, String label, String value, Color color) {
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 32.0),
+        const SizedBox(height: 8.0),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 16.0, color: Colors.grey),
+        ),
+        const SizedBox(height: 8.0),
+        Text(
+          value,
+          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold, color: color),
+        ),
+      ],
+    );
   }
 
-  loadLocation() {
-    getUserCurrentLocation().then((value) async {
-      if (kDebugMode) {
-        print("My current location");
-      }
-      if (kDebugMode) {
-        print("${value.latitude} ${value.longitude}");
-      }
-      marker.add(
-        Marker(
-          markerId: const MarkerId("0"),
-          position: LatLng(value.latitude, value.longitude),
-          infoWindow: const InfoWindow(title: "My Current Location"),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-        ),
-      );
-      CameraPosition cameraPosition = CameraPosition(
-          zoom: 14,
-          target: LatLng(value.latitude, value.longitude));
-      googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-      setState(() {});
-    });
-  }
+
 
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
@@ -170,6 +194,7 @@ class MapsPageState extends State<MapsPage> {
       types: [],
       components: [Component(Component.country, "IND")],
     );
+
     if (p != null) {
       displayPrediction(p, homeScaffoldKey.currentState as ScaffoldMessengerState?);
     }
@@ -198,13 +223,9 @@ class MapsPageState extends State<MapsPage> {
     );
     setState(() {});
 
-    // Store the context in a local variable
     final context = messengerState!.context;
-
-    // Use the local context variable
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(detail.result.name)));
   }
-
 
   Future<Position> getUserCurrentLocation() async {
     await Geolocator.requestPermission().then((value) {}).onError((error, stackTrace) {
@@ -216,10 +237,35 @@ class MapsPageState extends State<MapsPage> {
     return await Geolocator.getCurrentPosition();
   }
 
+  void loadLocation() {
+    getUserCurrentLocation().then((value) async {
+      if (kDebugMode) {
+        print("My current location");
+      }
+      if (kDebugMode) {
+        print("${value.latitude} ${value.longitude}");
+      }
+      markersList.add(
+        Marker(
+          markerId: const MarkerId("0"),
+          position: LatLng(value.latitude, value.longitude),
+          infoWindow: const InfoWindow(title: "My Current Location"),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        ),
+      );
+      CameraPosition cameraPosition = CameraPosition(
+        zoom: 14,
+        target: LatLng(value.latitude, value.longitude),
+      );
+      googleMapController.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      setState(() {});
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    marker.addAll(_list);
+    fetchMarkersFromFirestoreForAllUsers();
     loadLocation();
   }
 
@@ -228,17 +274,31 @@ class MapsPageState extends State<MapsPage> {
     return Scaffold(
       key: homeScaffoldKey,
       appBar: AppBar(
-          backgroundColor: Colors.blue.shade900,
         leading: IconButton(
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const HomePage()), // Use HomePage()
+              MaterialPageRoute(
+                builder: (context) =>  const HomePage(),
+              ),
             );
           },
           icon: const Icon(Ionicons.chevron_back_outline),
         ),
         leadingWidth: 80,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue.shade900, Colors.blue.shade500],
+            ),
+          ),
+        ),
+        title: const Text(
+          "Maps",
+          style: TextStyle(color: Colors.white),
+        ),
         actions: [
           ElevatedButton(
             onPressed: _handlePressButton,
@@ -253,7 +313,7 @@ class MapsPageState extends State<MapsPage> {
       body: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: _kGooglePlex,
-        markers: Set<Marker>.of(marker).union(markersList),
+        markers: markersList,
         onMapCreated: (GoogleMapController controller) {
           _controller.complete(controller);
           googleMapController = controller;

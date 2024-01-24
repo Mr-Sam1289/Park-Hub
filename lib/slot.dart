@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:smartparkin1/payment_page.dart';
+import 'package:smartparkin1/vehicle_details_page.dart';
 class SelectSlotPage extends StatefulWidget {
   const SelectSlotPage({super.key});
   @override
@@ -14,15 +15,31 @@ class SelectSlotPageState extends State<SelectSlotPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) =>  const VehicleDetailsPage(),
+              ),
+            );
           },
           icon: const Icon(Ionicons.chevron_back_outline),
         ),
         leadingWidth: 80,
-        title: const Text('Select Slot'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Colors.blue.shade900, Colors.blue.shade500],
+            ),
+          ),
+        ),
+        title: const Text(
+          "Select Slot",
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
