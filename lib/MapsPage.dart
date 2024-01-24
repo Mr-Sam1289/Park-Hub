@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, file_names
+
 import 'dart:async';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
@@ -11,7 +13,6 @@ import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 import 'package:smartparkin1/HomePage.dart';
 import 'package:smartparkin1/dateandtime.dart';
-
 
 class MapsPage extends StatefulWidget {
   const MapsPage({super.key});
@@ -85,9 +86,7 @@ class MapsPageState extends State<MapsPage> {
     }
   }
 
-
   Future<void> _showSlideUpModal(BuildContext context, String markerId, String userName) async {
-
     final localContext = context;
 
     Map<String, dynamic> slotDetails = await fetchSlotDetailsFromFirestore(markerId);
@@ -112,13 +111,13 @@ class MapsPageState extends State<MapsPage> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: Colors.grey,  // Replace with your desired border color
-                    width: 2.0,         // Replace with your desired border width
+                    color: Colors.grey,
+                    width: 2.0,
                   ),
                 ),
                 child: const CircleAvatar(
                   radius: 50.0,
-                  backgroundImage: AssetImage('assets/images/lot_image.jpg'), // Replace with your parking lot image
+                  backgroundImage: AssetImage('assets/images/lot_image.jpg'),
                 ),
               ),
               const SizedBox(height: 16.0),
@@ -180,8 +179,6 @@ class MapsPageState extends State<MapsPage> {
       ],
     );
   }
-
-
 
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
@@ -279,7 +276,7 @@ class MapsPageState extends State<MapsPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>  const HomePage(),
+                builder: (context) => const HomePage(),
               ),
             );
           },

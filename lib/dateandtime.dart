@@ -4,8 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:smartparkin1/MapsPage.dart';
 import 'package:smartparkin1/vehicle_details_page.dart';
 
-
-
 class DateAndTime extends StatelessWidget {
   const DateAndTime({super.key});
 
@@ -53,7 +51,6 @@ class CountController extends StatelessWidget {
       ],
     );
   }
-
 }
 
 class ParkingApp extends StatefulWidget {
@@ -100,8 +97,6 @@ class ParkingAppState extends State<ParkingApp> {
     );
   }
 
-
-
   String _formatDateTime(DateTime dateTime) {
     String formattedDateTime = DateFormat('MMMM d,  h:mm a').format(dateTime);
     return formattedDateTime;
@@ -112,123 +107,133 @@ class ParkingAppState extends State<ParkingApp> {
     return Scaffold(
       body: Column(
         children: [
-          // Asset Container for Background
-          Container(
-            color: Colors.black,
-            height: MediaQuery.of(context).size.height / 2, // Half of the screen height
-            child: Image.asset(
-              'assets/images/clock2.avif', // Replace with your asset path
-              fit: BoxFit.cover, // Adjust the fit as needed
-            ),
-          ),
-          // White bottom part
-          Container(
-            color: Colors.white,
-            height: MediaQuery.of(context).size.height / 2, // Half of the screen height
-            child: Column(
-              children: [
-                // Select Date and Time button
-                Padding(
-                  padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
-                  child: ElevatedButton(
-                    onPressed: () => _selectDateTime(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      textStyle: const TextStyle(fontSize: 20),
-                    ),
-                    child: const Text(
-                      'Select date and time of arrival',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-                // Display the selected date and time
-                Text(_formatDateTime(_selectedDateTime), style: const TextStyle(fontSize: 24)),
-
-                // New Box Widget for Time Selection
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                      color: Colors.white, // Adjust as needed
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Select Time (Hours)',
-                          style: TextStyle(fontSize: 22),
-                        ),
-
-                        // Integrate the CountController widget
-                        CountController(
-                          count: _selectedHours,
-                          onChanged: (newCount) {
-                            setState(() {
-                              _selectedHours = newCount;
-                            });
-                          },
-                        ),
-
-                        const SizedBox(height: 10),
-                        Text(
-                          'Total Amount: ₹${_selectedHours * 30}', // Calculate total amount
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Buttons
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const MapsPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      child: const Text('Back'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const VehicleDetailsPage()),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                      ),
-                      child: const Text('Next'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 40),
-              ],
-            ),
-          ),
+          _buildBackgroundContainer(),
+          _buildBottomContainer(context),
         ],
       ),
+    );
+  }
+
+  Widget _buildBackgroundContainer() {
+    return Container(
+      color: Colors.black,
+      height: MediaQuery.of(context).size.height / 2,
+      child: Image.asset(
+        'assets/images/clock2.avif',
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
+  Widget _buildBottomContainer(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      height: MediaQuery.of(context).size.height / 2,
+      child: Column(
+        children: [
+          _buildSelectDateTimeButton(),
+          Text(_formatDateTime(_selectedDateTime), style: const TextStyle(fontSize: 24)),
+          _buildTimeSelectionContainer(),
+          _buildButtons(),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSelectDateTimeButton() {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30.0, left: 30.0, right: 30.0),
+      child: ElevatedButton(
+        onPressed: () => _selectDateTime(context),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          textStyle: const TextStyle(fontSize: 20),
+        ),
+        child: const Text(
+          'Select date and time of arrival',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTimeSelectionContainer() {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Select Time (Hours)',
+              style: TextStyle(fontSize: 22),
+            ),
+            CountController(
+              count: _selectedHours,
+              onChanged: (newCount) {
+                setState(() {
+                  _selectedHours = newCount;
+                });
+              },
+            ),
+            const SizedBox(height: 10),
+
+            Text(
+              'Total Amount: ₹${_selectedHours * 30}',
+              style: const TextStyle(fontSize: 20),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const MapsPage()),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+          child: const Text('Back'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => VehicleDetailsPage(amountToPay: _selectedHours*30,)),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.black,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.0),
+            ),
+          ),
+          child: const Text('Next'),
+        ),
+      ],
     );
   }
 }

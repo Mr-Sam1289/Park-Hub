@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         'signup': (context) => const SignUpWidget(),
         'signin': (context) => const SignInPage(),
         'HomePage': (context) => const HomePage(),
-        'AccountScreen': (context) => const AccountScreen(),
+        'settings_page': (context) => const SettingsPage(),
         'ParkingApp': (context) => const ParkingApp(),
         'MapsPage': (context) => const MapsPage(),
         'payment_page': (context) => const PaymentScreen(),

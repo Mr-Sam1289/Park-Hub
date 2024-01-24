@@ -1,22 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:smartparkin1/signin.dart';
 import 'profile_page.dart';
 import 'forward_button.dart';
 import 'setting_item.dart';
 import 'setting_switch.dart';
 import 'package:ionicons/ionicons.dart';
 
-class AccountScreen extends StatefulWidget {
-  const AccountScreen({super.key});
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<AccountScreen> createState() => _AccountScreenState();
+  State<SettingsPage> createState() => SettingsPageState();
 }
 
-class _AccountScreenState extends State<AccountScreen> {
+class SettingsPageState extends State<SettingsPage> {
   bool isDarkMode = false;
-
   final Logger logger = Logger();
 
   void _logout(BuildContext context) async {
@@ -25,7 +27,9 @@ class _AccountScreenState extends State<AccountScreen> {
       await FirebaseAuth.instance.signOut();
 
       // After signing out, navigate to the login page or any other page
-      Navigator.pushReplacementNamed(context, 'signin');
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SignInPage()));
     } catch (e) {
       logger.i('Error during logout: $e');
       // Handle errors, if any, during logout
@@ -36,9 +40,9 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(), // Set the default light theme
-      darkTheme: ThemeData.dark(), // Set the default dark theme
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light, // Set the current theme mode
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
       home: Scaffold(
         appBar: AppBar(
@@ -97,7 +101,7 @@ class _AccountScreenState extends State<AccountScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>  const EditAccountScreen(),
+                              builder: (context) => const ProfilePage(),
                             ),
                           );
                         },
@@ -155,7 +159,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-
                     ElevatedButton(
                       onPressed: () {
                         _logout(context);
@@ -167,7 +170,6 @@ class _AccountScreenState extends State<AccountScreen> {
                           borderRadius: BorderRadius.circular(20.0),
                         ),
                       ),
-
                       child: const Text("Logout"),
                     ),
                   ],

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,14 +10,14 @@ import 'dart:io';
 
 import 'edit_item.dart';
 
-class EditAccountScreen extends StatefulWidget {
-  const EditAccountScreen({super.key});
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({super.key});
 
   @override
-  EditAccountScreenState createState() => EditAccountScreenState();
+  ProfilePageState createState() => ProfilePageState();
 }
 
-class EditAccountScreenState extends State<EditAccountScreen> {
+class ProfilePageState extends State<ProfilePage> {
   final Logger logger = Logger();
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;

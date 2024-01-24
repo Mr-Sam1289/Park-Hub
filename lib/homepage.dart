@@ -6,14 +6,25 @@ import 'mybookings.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
+          // Background Container with Image
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SizedBox(
+              height: 200.0,
+              child: Image.asset(
+                'assets/images/homebg2.jpg',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
           // White Container with Rounded Edges
           Positioned(
             top: 200.0,
@@ -32,7 +43,7 @@ class HomePage extends StatelessWidget {
                 child: Column(
                   children: [
                     const Padding(
-                      padding:  EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: 10.0,
                         vertical: 5.0,
                       ),
@@ -43,149 +54,88 @@ class HomePage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    GestureDetector(
+                    buildGestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const MapsPage()),
                         );
                       },
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 5.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              spreadRadius: 2,
-                              blurRadius: 2,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/ReserveParkingSpace.jpg',
-                              width: 100,
-                              height: 100.0,
-                            ),
-                            const ListTile(
-                              title: Text('Reserve a parking space'),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded),
-                            ),
-                          ],
-                        ),
-                      ),
+                      imageAsset: 'assets/images/ReserveParkingSpace.jpg',
+                      title: 'Reserve a parking space',
+                      trailingIcon: Icons.arrow_forward_ios_rounded,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>  const MyBookingsPage()));
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 5.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              spreadRadius: 2,
-                              blurRadius: 2,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/MyBookings.png',
-                              width: 100,
-                              height: 100.0,
-                            ),
-                            const ListTile(
-                              title: Text('My Bookings'),
-                              trailing: Icon(Icons.arrow_forward_ios_rounded),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
+                    buildGestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
-                            builder: (context) => const AccountScreen(),
-                          ),
+                          MaterialPageRoute(builder: (context) => const MyBookingsPage()),
                         );
-
                       },
-                      child: Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 10.0,
-                          vertical: 5.0,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black12,
-                              spreadRadius: 2,
-                              blurRadius: 2,
-                              offset: Offset(2, 2),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Image.asset(
-                              'assets/images/settingsIcon.png',
-                              width: 100,
-                              height: 100.0,
-                            ),
-                            const ListTile(
-                              title: Text('Settings'),
-                              trailing: Icon(Icons.arrow_forward_ios_sharp),
-                            ),
-                          ],
-                        ),
-                      ),
+                      imageAsset: 'assets/images/MyBookings.png',
+                      title: 'My Bookings',
+                      trailingIcon: Icons.arrow_forward_ios_rounded,
+                    ),
+                    buildGestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const SettingsPage()),
+                        );
+                      },
+                      imageAsset: 'assets/images/settingsIcon.png',
+                      title: 'Settings',
+                      trailingIcon: Icons.arrow_forward_ios_sharp,
                     ),
                   ],
                 ),
               ),
             ),
           ),
-
-          // Background Container with Image
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: 200.0,
-              child: Image.asset(
-                'assets/images/homebg2.jpg',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
         ],
+      ),
+    );
+  }
+
+  GestureDetector buildGestureDetector({
+    required VoidCallback onTap,
+    required String imageAsset,
+    required String title,
+    required IconData trailingIcon,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 10.0,
+          vertical: 5.0,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black12,
+              spreadRadius: 2,
+              blurRadius: 2,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            Image.asset(
+              imageAsset,
+              width: 100,
+              height: 100.0,
+            ),
+            ListTile(
+              title: Text(title),
+              trailing: Icon(trailingIcon),
+            ),
+          ],
+        ),
       ),
     );
   }

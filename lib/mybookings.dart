@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyBookingsPage extends StatefulWidget {
   const MyBookingsPage({super.key});
+
   @override
   MyBookingsPageState createState() => MyBookingsPageState();
 }
@@ -60,16 +61,4 @@ class MyBookingsPageState extends State<MyBookingsPage> with SingleTickerProvide
     );
   }
 }
-
-void main() {
-  runApp(
-    const MaterialApp(
-      home: MyBookingsPage(),
-    ),
-  );
-}
-
-
-
-
 
