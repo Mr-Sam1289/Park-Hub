@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:smartparkin1/mybookings.dart';
+import 'package:smartparkin1/payment_page.dart';
+import 'package:smartparkin1/profile_page.dart';
+import 'package:smartparkin1/slot.dart';
+import 'package:smartparkin1/vehicle_details_page.dart';
 import 'firebase_options.dart';
+import 'invoice.dart';
 import 'splashscreen.dart';
 import 'signup.dart';
 import 'signin.dart';
@@ -10,7 +16,6 @@ import 'HomePage.dart';
 import 'settings_page.dart';
 import 'dateandtime.dart';
 import 'MapsPage.dart';
-import 'payment_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,11 +36,48 @@ class MyApp extends StatelessWidget {
       routes: {
         'signup': (context) => const SignUpWidget(),
         'signin': (context) => const SignInPage(),
-        'HomePage': (context) => const HomePage(),
+        'homepage': (context) => const HomePage(),
         'settings_page': (context) => const SettingsPage(),
-        'ParkingApp': (context) => const ParkingApp(),
+        'mybookings': (context) => const MyBookingsPage(),
+        'dateandtime': (context) => const DateAndTime(lotName:'',lotId: '',),
         'MapsPage': (context) => const MapsPage(),
-        'payment_page': (context) => const PaymentScreen(),
+        'profile_page': (context) => const ProfilePage(),
+        'vehicle_details_page': (context) => VehicleDetailsPage(
+          amountToPass: 0.0,
+          lotName: '',
+          reserved: DateTime(2004),
+          hours: 0,
+          lotId: '',
+        ),
+        'slot': (context) => SelectSlotPage(
+          amountToPass:0.0,
+          selectedVehicleType: '',
+          selectedVehicleNumber:'',
+          reserved: DateTime(2004),
+          lotName:'',
+          hours: 0,
+          lotId: '',
+        ),
+        'payment_page': (context) => PaymentScreen(
+          amountToPay: 0.0,
+          selectedVehicleType:'',
+          selectedVehicleNumber: '',
+          hours: 0,
+          reserved:DateTime(2004),
+          lotName:'',
+          slot: '',
+          lotId: '',
+        ),
+        'invoice': (context) => InvoicePage(
+          lot: '',
+          slot: '',
+          reservedHours: 0,
+          reservedDate: DateTime.now().add(const Duration(days: 1)),
+          totalAmount: 0.0,
+          vehicleType: '',
+          vehicleNumber: '',
+          lotId: '',
+        ),
       },
     );
   }

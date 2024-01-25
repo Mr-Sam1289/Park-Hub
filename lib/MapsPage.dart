@@ -15,6 +15,7 @@ import 'package:smartparkin1/HomePage.dart';
 import 'package:smartparkin1/dateandtime.dart';
 
 class MapsPage extends StatefulWidget {
+
   const MapsPage({super.key});
 
   @override
@@ -93,6 +94,7 @@ class MapsPageState extends State<MapsPage> {
 
     String parkingLotDetailsText = userName;
 
+
     showModalBottomSheet(
       context: localContext,
       builder: (BuildContext context) {
@@ -120,12 +122,12 @@ class MapsPageState extends State<MapsPage> {
                   backgroundImage: AssetImage('assets/images/lot_image.jpg'),
                 ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 25.0),
               Text(
                 parkingLotDetailsText,
                 style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 20.0),
+              const SizedBox(height: 35.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -134,12 +136,12 @@ class MapsPageState extends State<MapsPage> {
                   _buildInfoItem(Icons.format_list_numbered, 'Total slots', slotDetails['totalSlots'].toString(), Colors.blue),
                 ],
               ),
-              const SizedBox(height: 30.0),
+              const SizedBox(height: 50.0),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const DateAndTime()),
+                    MaterialPageRoute(builder: (context) =>  DateAndTime(lotName: parkingLotDetailsText,lotId: markerId,)),
                   );
                 },
                 style: ElevatedButton.styleFrom(
@@ -169,7 +171,7 @@ class MapsPageState extends State<MapsPage> {
         const SizedBox(height: 8.0),
         Text(
           label,
-          style: const TextStyle(fontSize: 16.0, color: Colors.grey),
+          style: const TextStyle(fontSize: 16.0, color: Colors.black),
         ),
         const SizedBox(height: 8.0),
         Text(
@@ -273,14 +275,14 @@ class MapsPageState extends State<MapsPage> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => const HomePage(),
               ),
             );
           },
-          icon: const Icon(Ionicons.chevron_back_outline),
+          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
         ),
         leadingWidth: 80,
         flexibleSpace: Container(

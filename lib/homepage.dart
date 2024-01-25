@@ -56,7 +56,7 @@ class HomePage extends StatelessWidget {
                     ),
                     buildGestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const MapsPage()),
                         );
@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
                     ),
                     buildGestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const MyBookingsPage()),
                         );
@@ -78,7 +78,7 @@ class HomePage extends StatelessWidget {
                     ),
                     buildGestureDetector(
                       onTap: () {
-                        Navigator.push(
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const SettingsPage()),
                         );

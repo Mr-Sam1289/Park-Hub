@@ -3,6 +3,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
+import 'package:smartparkin1/HomePage.dart';
 import 'package:smartparkin1/signin.dart';
 import 'profile_page.dart';
 import 'forward_button.dart';
@@ -48,11 +49,27 @@ class SettingsPageState extends State<SettingsPage> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
             },
-            icon: const Icon(Ionicons.chevron_back_outline),
+            icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
           ),
           leadingWidth: 80,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
+              ),
+            ),
+          ),
+          title: const Text(
+            "Settings",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         body: SingleChildScrollView(
           child: Padding(

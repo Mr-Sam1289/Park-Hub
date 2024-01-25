@@ -4,19 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:smartparkin1/MapsPage.dart';
 import 'package:smartparkin1/vehicle_details_page.dart';
 
-class DateAndTime extends StatelessWidget {
-  const DateAndTime({super.key});
+class DateAndTime extends StatefulWidget {
+  final String lotName;
+  final String lotId;
+  const DateAndTime({super.key,required this.lotName,required this.lotId});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Parking App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const ParkingApp(),
-    );
-  }
+  State<DateAndTime> createState() => DateAndTimeState();
 }
 
 class CountController extends StatelessWidget {
@@ -53,14 +47,8 @@ class CountController extends StatelessWidget {
   }
 }
 
-class ParkingApp extends StatefulWidget {
-  const ParkingApp({super.key});
 
-  @override
-  ParkingAppState createState() => ParkingAppState();
-}
-
-class ParkingAppState extends State<ParkingApp> {
+class DateAndTimeState extends State<DateAndTime> {
   DateTime _selectedDateTime = DateTime.now();
   int _selectedHours = 0;
 
@@ -132,7 +120,13 @@ class ParkingAppState extends State<ParkingApp> {
       child: Column(
         children: [
           _buildSelectDateTimeButton(),
-          Text(_formatDateTime(_selectedDateTime), style: const TextStyle(fontSize: 24)),
+          GestureDetector(
+            onTap: () => _selectDateTime(context),
+            child: Text(
+              _formatDateTime(_selectedDateTime),
+              style: const TextStyle(fontSize: 24, color: Colors.blue,fontWeight: FontWeight.bold),
+            ),
+          ),
           _buildTimeSelectionContainer(),
           _buildButtons(),
           const SizedBox(height: 40),
@@ -140,6 +134,7 @@ class ParkingAppState extends State<ParkingApp> {
       ),
     );
   }
+
 
   Widget _buildSelectDateTimeButton() {
     return Padding(
@@ -197,13 +192,14 @@ class ParkingAppState extends State<ParkingApp> {
     );
   }
 
+
   Widget _buildButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const MapsPage()),
             );
@@ -219,9 +215,16 @@ class ParkingAppState extends State<ParkingApp> {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => VehicleDetailsPage(amountToPay: _selectedHours*30,)),
+              MaterialPageRoute(
+                  builder: (context) => VehicleDetailsPage(
+                    amountToPass: _selectedHours*30,
+                  lotName: widget.lotName,
+                  reserved: _selectedDateTime,
+                  hours: _selectedHours,
+                    lotId: widget.lotId,
+                  )),
             );
           },
           style: ElevatedButton.styleFrom(

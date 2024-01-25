@@ -7,8 +7,12 @@ import 'package:smartparkin1/dateandtime.dart';
 import 'package:smartparkin1/slot.dart';
 
 class VehicleDetailsPage extends StatefulWidget {
-  final double amountToPay;
-  const VehicleDetailsPage({super.key, required this.amountToPay});
+  final double amountToPass;
+  final String lotName;
+  final DateTime reserved;
+  final int hours;
+  final String lotId;
+  const VehicleDetailsPage({super.key, required this.amountToPass, required this.lotName,required this.reserved,required this.hours,required this.lotId});
 
   @override
   State<VehicleDetailsPage> createState() => VehicleDetailsPageState();
@@ -31,7 +35,7 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
     loadUserVehicleDetails();
   }
 
-  List<String> vehicleTypes = ['Car', 'Motorcycle', 'Truck', 'Other'];
+  List<String> vehicleTypes = ['Car', 'Motorcycle', 'Truck', 'Auto'];
 
   // Function to add vehicle details to Firestore
   Future<void> addVehicleDetails(
@@ -121,6 +125,7 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
     return email.replaceAll(RegExp(r'[^\w\s]+'), '');
   }
 
+
   // Function to show bottom sheet for entering new vehicle details
   void _showVehicleDetailsBottomSheet(BuildContext context) {
     showModalBottomSheet(
@@ -131,6 +136,7 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
       builder: (BuildContext context) {
         return SingleChildScrollView(
           child: Container(
+            height: MediaQuery.of(context).size.height,
             padding: const EdgeInsets.all(30),
             decoration: const BoxDecoration(
               color: Colors.white,
@@ -295,6 +301,7 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -302,11 +309,11 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const DateAndTime(),
+                builder: (context) => const DateAndTime(lotName: '',lotId: '',),
               ),
             );
           },
-          icon: const Icon(Ionicons.chevron_back_outline),
+          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -365,8 +372,13 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
               context,
               MaterialPageRoute(
                   builder: (context) => SelectSlotPage(
+                    amountToPass: widget.amountToPass,
                     selectedVehicleType: vehicleDetails['vehicleType'] ?? 'car',
-                    amountToPay: am,
+                    selectedVehicleNumber: vehicleDetails['vehicleNumber'],
+                    reserved: widget.reserved,
+                    lotName: widget.lotName,
+                    hours: widget.hours,
+                    lotId: widget.lotId,
                   )
               )
           );

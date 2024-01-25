@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:smartparkin1/payment_page.dart';
-import 'package:smartparkin1/vehicle_details_page.dart';
+import 'payment_page.dart';
+import 'vehicle_details_page.dart';
 
 class SelectSlotPage extends StatefulWidget {
-  final double amountToPay;
+  final double amountToPass;
+  final String lotName;
+  final DateTime reserved;
+  final int hours;
   final String selectedVehicleType;
+  final String selectedVehicleNumber;
+  final String lotId;
 
-  const SelectSlotPage({super.key, required this.selectedVehicleType,required this.amountToPay});
+  const SelectSlotPage({super.key,required this.lotName,required this.reserved,required this.hours, required this.selectedVehicleType,required this.selectedVehicleNumber,required this.amountToPass,required this.lotId});
 
   @override
   SelectSlotPageState createState() => SelectSlotPageState();
@@ -28,14 +33,15 @@ class SelectSlotPageState extends State<SelectSlotPage> {
     return AppBar(
       leading: IconButton(
         onPressed: () {
+          final re = DateTime(2004);
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const VehicleDetailsPage(amountToPay: 0.0,),
+              builder: (context) => VehicleDetailsPage(amountToPass: 0.0,hours: 0,lotName: '',reserved: re,lotId: '',),
             ),
           );
         },
-        icon: const Icon(Ionicons.chevron_back_outline),
+        icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
       ),
       leadingWidth: 80,
       flexibleSpace: Container(
@@ -125,7 +131,7 @@ class SelectSlotPageState extends State<SelectSlotPage> {
       'Car': 'assets/images/car1.jpg',
       'Motorcycle': 'assets/images/motorcycle.jpg',
       'Truck': 'assets/images/truck.jpg',
-      'Other': 'assets/images/other.jpg',
+      'Auto': 'assets/images/Auto.jpg',
     };
 
     // Get the selected vehicle type
@@ -144,6 +150,7 @@ class SelectSlotPageState extends State<SelectSlotPage> {
 
 
   Widget _buildProceedButton() {
+    // ignore: unused_local_variable
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -151,7 +158,18 @@ class SelectSlotPageState extends State<SelectSlotPage> {
             ? () {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const PaymentScreen()),
+            MaterialPageRoute(
+                builder: (context) => PaymentScreen(
+                  amountToPay: widget.amountToPass,
+                  selectedVehicleType: widget.selectedVehicleType,
+                  selectedVehicleNumber: widget.selectedVehicleNumber,
+                  hours: widget.hours,
+                  reserved: widget.reserved,
+                  lotName: widget.lotName,
+                    slot: selectedSlot,
+                  lotId: widget.lotId,
+                )
+            ),
           );
         }
             : null,

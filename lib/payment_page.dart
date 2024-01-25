@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
-import 'package:smartparkin1/invoice.dart';
+import 'invoice.dart';
+import 'slot.dart';
 import 'package:upi_india/upi_india.dart';
 
 class PaymentScreen extends StatefulWidget {
-  const PaymentScreen({super.key});
+  final double amountToPay;
+  final String lotName;
+  final DateTime reserved;
+  final int hours;
+  final String selectedVehicleType;
+  final String selectedVehicleNumber;
+  final String slot;
+  final String lotId;
+  const PaymentScreen({super.key,required this.amountToPay,required this.lotName,required this.reserved,required this.hours, required this.selectedVehicleType,required this.selectedVehicleNumber,required this.slot,required this.lotId});
 
   @override
-  State<PaymentScreen> createState() => _PaymentScreenState();
+  State<PaymentScreen> createState() => PaymentScreenState();
 }
 
-class _PaymentScreenState extends State<PaymentScreen> {
+class PaymentScreenState extends State<PaymentScreen> {
+
   final Logger logger = Logger();
   final UpiIndia _upiIndia = UpiIndia();
   Future<UpiResponse>? _transaction;
@@ -41,7 +52,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
       receiverName: "M ABHISHEK",
       transactionRefId: "Park_Hub",
       transactionNote: "Parking amount",
-      amount: 1,
+      amount: widget.amountToPay,
     );
   }
 
@@ -89,79 +100,28 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  Widget _buildTransactionDetailsView() {
-    return Expanded(
-      child: FutureBuilder(
-        future: _transaction,
-        builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
 
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  _upiErrorHandler(snapshot.error.runtimeType),
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              );
-            }
-            UpiResponse upiResponse = snapshot.data!;
-            String txnId = upiResponse.transactionId ?? "N/A";
-            String resCode = upiResponse.responseCode ?? "N/A";
-            String txnRef = upiResponse.transactionRefId ?? "N/A";
-            String status = upiResponse.status ?? "N/A";
-            String approvalRef = upiResponse.approvalRefNo ?? "N/A";
-            _checkTxnStatus(status);
-
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _displayTransactionData("Transaction Id", txnId),
-                  _displayTransactionData("Response Code", resCode),
-                  _displayTransactionData("Reference Id", txnRef),
-                  _displayTransactionData("Status", status.toUpperCase()),
-                  _displayTransactionData("Approval No", approvalRef),
-                ],
-              ),
-            );
-          } else {
-            return const Center(
-              child: Text(""),
-            );
-          }
-        },
-      ),
-    );
-  }
 
   Widget _buildInvoiceButton() {
     return ElevatedButton(
       onPressed: () {
         // Navigate to the Invoice screen
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => InvoicePage(
-              invoiceNumber: '12345',
-              invoiceDate: DateTime.now(),
-              lot: 'A',
-              slot: 'B',
-              reservedHours: 2,
-              reservedDate: DateTime.now().add(const Duration(days: 1)),
-              totalAmount: 180.0,
-              vehicleType: 'Car',
-              vehicleNumber: 'ABC123',
-              customerName: 'John Doe',
-              mobile: '123-456-7890',
-              paymentMethod: 'Credit Card',
-            ),
-          ),
+              lot: widget.lotName,
+              slot: widget.slot,
+              reservedHours: widget.hours,
+              reservedDate: widget.reserved,
+              totalAmount: widget.amountToPay,
+              vehicleType: widget.selectedVehicleType,
+              vehicleNumber: widget.selectedVehicleNumber,
+              lotId: widget.lotId,
+          )
+        )
         );
-      },
+        },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blue.shade900,
         foregroundColor: Colors.white,
@@ -177,6 +137,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SelectSlotPage(
+                    lotName: '',
+                    reserved: DateTime(2004),
+                    hours: 0,
+                    selectedVehicleType: '',
+                    selectedVehicleNumber: '',
+                    amountToPass: 0.0,
+                  lotId: '',
+                ),
+              ),
+            );
+          },
+          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
+        ),
+        leadingWidth: 80,
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -187,14 +167,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
           ),
         ),
         title: const Text(
-          "Make Payment",
+          "Payments",
           style: TextStyle(color: Colors.white),
         ),
       ),
       body: Column(
         children: <Widget>[
           _buildUpiAppsGridView(),
-          _buildTransactionDetailsView(),
           _buildInvoiceButton(),
           const SizedBox(height: 80),
         ],
@@ -202,53 +181,6 @@ class _PaymentScreenState extends State<PaymentScreen> {
     );
   }
 
-  String _upiErrorHandler(error) {
-    switch (error) {
-      case UpiIndiaAppNotInstalledException _:
-        return 'Requested app not installed on the device';
-      case UpiIndiaUserCancelledException _:
-        return 'You cancelled the transaction';
-      case UpiIndiaNullResponseException _:
-        return 'Requested app didn\'t return any response';
-      case UpiIndiaInvalidParametersException _:
-        return 'Requested app cannot handle the transaction';
-      default:
-        return 'An unknown error has occurred';
-    }
-  }
 
-  void _checkTxnStatus(String status) {
-    switch (status) {
-      case UpiPaymentStatus.SUCCESS:
-        logger.i("Transaction Successful");
-        break;
-      case UpiPaymentStatus.SUBMITTED:
-        logger.i("Transaction Submitted");
-        break;
-      case UpiPaymentStatus.FAILURE:
-        logger.i("Transaction Failed");
-        break;
-      default:
-        logger.i("Received an unknown transaction status");
-    }
-  }
 
-  Widget _displayTransactionData(String title, String body) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "$title: ",
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          ),
-          Text(
-            body,
-            style: const TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
 }
