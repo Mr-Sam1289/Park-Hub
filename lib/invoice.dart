@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
 import 'package:intl/intl.dart';
+import 'package:smartparkin1/HomePage.dart';
 import 'package:smartparkin1/payment_page.dart';
 import 'dart:math';
 
@@ -155,7 +156,7 @@ class InvoicePageState extends State<InvoicePage> {
                           style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
                         ),const SizedBox(height: 10),
                         Text(
-                          'Time: ${DateFormat('hh:mm').format(DateTime.now())}',
+                          'Time: ${DateFormat('hh:mm a').format(DateTime.now())}',
                           style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 20),
@@ -170,6 +171,9 @@ class InvoicePageState extends State<InvoicePage> {
                         ElevatedButton(
                           onPressed: () {
                             _saveInvoice();
+                            Navigator.pushReplacement(
+                                context,
+                            MaterialPageRoute(builder: (context) => const HomePage()));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.black,
@@ -210,21 +214,24 @@ class InvoicePageState extends State<InvoicePage> {
         FirebaseFirestore.instance.collection('Invoice').doc(documentName);
 
         // Add invoice details to a subcollection named 'invoiceNumber'
-        await userDocRef.collection('Invoices').doc(invoiceNumber).set({
-          'invoiceNumber': invoiceNumber,
-          'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
-          'time':DateFormat('hh:mm').format(DateTime.now()),
-          'lotName': widget.lot,
-          'slotName': widget.slot,
-          'reservedHours': widget.reservedHours,
-          'reservedDate': DateFormat('dd-MM-yyyy').format(widget.reservedDate),
-          'reservedTime': DateFormat('hh:mm').format(widget.reservedDate),
-          'amount': widget.totalAmount,
-          'vehicleType': widget.vehicleType,
-          'vehicleNumber': widget.vehicleNumber,
-          'customerName': customerName,
-          'mobile': mobile,
-        });
+        if (widget.lot!="") {
+          await userDocRef.collection('Invoices').doc(invoiceNumber).set({
+            'invoiceNumber': invoiceNumber,
+            'date': DateFormat('dd-MM-yyyy').format(DateTime.now()),
+            'time': DateFormat('hh:mm a').format(DateTime.now()),
+            'lotName': widget.lot,
+            'slotName': widget.slot,
+            'reservedHours': widget.reservedHours,
+            'reservedDate': DateFormat('dd-MM-yyyy').format(
+                widget.reservedDate),
+            'reservedTime': DateFormat('hh:mm a').format(widget.reservedDate),
+            'amount': widget.totalAmount,
+            'vehicleType': widget.vehicleType,
+            'vehicleNumber': widget.vehicleNumber,
+            'customerName': customerName,
+            'mobile': mobile,
+          });
+        }
         // Update slot details
         await updateSlotDetails(widget.lotId);
 
@@ -283,7 +290,7 @@ class InvoicePageState extends State<InvoicePage> {
         buildDetailRow('Slot', widget.slot, Icons.directions_car),
         buildDetailRow('Reserved Hours', widget.reservedHours.toString(), Icons.access_time),
         buildDetailRow('Reserved Date', DateFormat('dd-MM-yyyy').format(widget.reservedDate), Icons.calendar_today),
-        buildDetailRow('Reserved Time', DateFormat('hh:mm').format(widget.reservedDate), Icons.timer_outlined),
+        buildDetailRow('Reserved Time', DateFormat('hh:mm a').format(widget.reservedDate), Icons.timer_outlined),
         buildDetailRow('Vehicle Type', widget.vehicleType, Icons.directions_car),
         buildDetailRow('Vehicle Number', widget.vehicleNumber, Icons.confirmation_number),
         buildDetailRow('Customer Name', customerName, Icons.person),
@@ -340,4 +347,3 @@ class InvoicePageState extends State<InvoicePage> {
     );
   }
 }
-

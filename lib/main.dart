@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:smartparkin1/mybookings.dart';
-import 'package:smartparkin1/payment_page.dart';
-import 'package:smartparkin1/profile_page.dart';
-import 'package:smartparkin1/slot.dart';
-import 'package:smartparkin1/vehicle_details_page.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:provider/provider.dart';
+import 'mybookings.dart';
+import 'payment_page.dart';
+import 'profile_page.dart';
+import 'slot.dart';
+import 'theme_provider.dart';
+import 'vehicle_details_page.dart';
 import 'firebase_options.dart';
 import 'invoice.dart';
 import 'splashscreen.dart';
@@ -21,7 +24,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -30,6 +38,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData.light(),
+      darkTheme: ThemeData.dark(),
+      themeMode: context.watch<ThemeProvider>().themeMode,
       debugShowCheckedModeBanner: false,
       title: 'Smart parking',
       home: const AuthWrapper(), // Change the home property
@@ -83,10 +94,23 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class AuthWrapper extends StatelessWidget {
+class AuthWrapper extends StatefulWidget {
   const AuthWrapper({super.key});
 
+  @override
+  AuthWrapperState createState() => AuthWrapperState();
+}
+
+class AuthWrapperState extends State<AuthWrapper> {
   Future<User?> getCurrentUser() async {
+
+    // Check if there is an internet connection
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      // No internet connection, you can show an error message or navigate to an offline state
+      return null;
+    }
+
     return FirebaseAuth.instance.currentUser;
   }
 
@@ -105,7 +129,7 @@ class AuthWrapper extends StatelessWidget {
           }
         } else if (snapshot.connectionState == ConnectionState.waiting) {
           // While waiting for the authentication check, show SplashScreen as a loading indicator
-          return const SplashScreen();
+          return const LoadingScreen();
         } else {
           // Handle other possible states (e.g., error)
           // Replace with your error screen widget

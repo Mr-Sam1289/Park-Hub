@@ -4,7 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
-import 'package:smartparkin1/signin.dart';
+
+import 'signin.dart';
 import 'package:logger/logger.dart';
 
 class SignUpWidget extends StatefulWidget {
@@ -153,7 +154,7 @@ class SignUpWidgetState extends State<SignUpWidget> {
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter your email';
-        } else if (!RegExp(r'^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+        } else if (!RegExp(r'^[\w\-]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
           return 'Please enter a valid email address';
         }
         return null;
@@ -192,6 +193,12 @@ class SignUpWidgetState extends State<SignUpWidget> {
           return 'Please enter a password';
         } else if (value.length < 6) {
           return 'Password must be at least 6 characters long';
+        }else if (!RegExp(r'^(?=.*[A-Z])').hasMatch(value)) {
+          return 'Password must contain at least one capital letter';
+        } else if (!RegExp(r'(?=.*[!@#$%^&*()_+{}|<>?])').hasMatch(value)){
+          return 'Password must contain at least one symbol';
+        }else if (!RegExp(r'(?=.*[0-9])').hasMatch(value)) {
+          return 'Password must contain at least one number';
         }
         return null;
       },
@@ -220,10 +227,7 @@ class SignUpWidgetState extends State<SignUpWidget> {
     return ElevatedButton(
       onPressed: () {
         _signUp(context);
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SignInPage()),
-        );
+
       },
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.black,
@@ -277,8 +281,10 @@ class SignUpWidgetState extends State<SignUpWidget> {
       ),
       style: const TextStyle(fontSize: 20.0),
       keyboardType: keyboardType,
+      textCapitalization: TextCapitalization.words,
       inputFormatters: inputFormatters,
       validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
     );
   }
 
@@ -286,7 +292,7 @@ class SignUpWidgetState extends State<SignUpWidget> {
     required TextEditingController controller,
     required String labelText,
     required String? Function(String?) validator,
-    AutovalidateMode autovalidateMode = AutovalidateMode.disabled,
+    autovalidateMode = AutovalidateMode.onUserInteraction,
   }) {
     return TextFormField(
       controller: controller,
@@ -308,6 +314,7 @@ class SignUpWidgetState extends State<SignUpWidget> {
       ),
       style: const TextStyle(fontSize: 20.0),
       validator: validator,
+      textCapitalization: TextCapitalization.words,
       autovalidateMode: autovalidateMode,
     );
   }
@@ -339,6 +346,24 @@ class SignUpWidgetState extends State<SignUpWidget> {
     return _passwordController.text.trim() == _confirmPasswordController.text.trim();
   }
 
+
+  void _listenToAuthChanges() {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user != null) {
+        await user.reload();
+        checkEmailVerification();
+      }
+    });
+  }
+
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToAuthChanges();
+  }
+
+
   Future<void> _signUp(BuildContext context) async {
     try {
       if (_formKey.currentState!.validate()) {
@@ -347,71 +372,117 @@ class SignUpWidgetState extends State<SignUpWidget> {
             email: _emailController.text,
             password: _passwordController.text,
           );
-
-          await addUserDetails(
-            userCredential.user?.uid ?? '',
-            _firstNameController.text.trim(),
-            _lastNameController.text.trim(),
-            _userNameController.text.trim(),
-            _emailController.text.trim(),
-            _phoneNumberController.text.trim(),
-            _passwordController.text.trim(),
-          );
-
           // Send email verification
           await userCredential.user?.sendEmailVerification();
 
-          // Display a success message to the user
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Verification email sent.'),
-            ),
+          // Show a dialog for email verification
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Verify Email'),
+                content: Text('A verification email has been sent to "${userCredential.user?.email}". Please verify your email before signing in, Within 3 minutes.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: const Text('OK'),
+                  ),
+                ],
+              );
+            },
           );
+
+          // Continue listening to authentication state changes
+          _listenToAuthChanges();
+
         }
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('The password provided is too weak.')),
-        );
+        showSnackBar(context,'The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('The account already exists for that email.'),
-          ),
-        );
+        showSnackBar(
+            context, 'The account already exists for that email.');
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred during sign-up.')),
-      );
+       showSnackBar(context, 'An error occurred during sign-up.');
     }
+
+    // Check if the email is verified before adding user details to Firestore
+    await _checkAndAddUserDetails();
   }
 
-  // Section 4: Authentication State Changes
+  Future<void> _checkAndAddUserDetails() async {
+    User? user = FirebaseAuth.instance.currentUser;
 
-  void _listenToAuthChanges() {
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+    await user?.reload();
+    user = FirebaseAuth.instance.currentUser;
+
+    if (user?.emailVerified ?? false) {
+      // Email is verified, add user details to Firestore
+      await addUserDetails(
+        _firstNameController.text.trim(),
+        _lastNameController.text.trim(),
+        _userNameController.text.trim(),
+        _emailController.text.trim(),
+        _phoneNumberController.text.trim(),
+        _passwordController.text.trim(),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const SignInPage()),
+      );
+    } else {
+      // Email is not verified, wait for 5 minutes before showing the message
+      await Future.delayed(const Duration(minutes: 3));
+
+      user = FirebaseAuth.instance.currentUser;
+
       if (user?.emailVerified ?? false) {
-        // If email is verified, navigate to SignInPage
+        // Email is verified after waiting, add user details to Firestore
+        await addUserDetails(
+          _firstNameController.text.trim(),
+          _lastNameController.text.trim(),
+          _userNameController.text.trim(),
+          _emailController.text.trim(),
+          _phoneNumberController.text.trim(),
+          _passwordController.text.trim(),
+        );
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const SignInPage()),
         );
+      } else {
+        // Email is still not verified, you can handle this case as needed
+
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('   Email not Verified',),
+              actions: [
+                const SizedBox(height:20,),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      user?.sendEmailVerification();
+                    },
+                    child: const Text('Resend Verification Email'),
+                  ),
+                )
+              ],
+            );
+          },
+        );
+
       }
-    });
+    }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _listenToAuthChanges();
-  }
-
-  // Section 5: Database Operations
-
-  Future<void> addUserDetails(String userId, String firstName, String lastName, String userName, String email, dynamic mobileNumber, String password) async {
-    await FirebaseFirestore.instance.collection('Users').doc(userId).set({
+  Future<void> addUserDetails( String firstName, String lastName, String userName, String email, dynamic mobileNumber, String password) async {
+    await FirebaseFirestore.instance.collection('Users').doc(email).set({
       'firstName': firstName,
       'lastName': lastName,
       'userName': userName,
@@ -420,4 +491,29 @@ class SignUpWidgetState extends State<SignUpWidget> {
       'password': password,
     });
   }
+
+
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16.0,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade300, // Adjust the color as needed
+        duration: const Duration(seconds: 3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0), // Adjust the radius as needed
+        ),
+      ),
+    );
+  }
+
+
+
+
+
 }

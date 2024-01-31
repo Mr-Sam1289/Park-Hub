@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:smartparkin1/MapsPage.dart';
 import 'package:smartparkin1/vehicle_details_page.dart';
@@ -7,7 +6,7 @@ import 'package:smartparkin1/vehicle_details_page.dart';
 class DateAndTime extends StatefulWidget {
   final String lotName;
   final String lotId;
-  const DateAndTime({super.key,required this.lotName,required this.lotId});
+  const DateAndTime({super.key, required this.lotName, required this.lotId});
 
   @override
   State<DateAndTime> createState() => DateAndTimeState();
@@ -17,7 +16,11 @@ class CountController extends StatelessWidget {
   final int count;
   final ValueSetter<int> onChanged;
 
-  const CountController({super.key, required this.count, required this.onChanged});
+  const CountController({
+    super.key,
+    required this.count,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +50,15 @@ class CountController extends StatelessWidget {
   }
 }
 
-
 class DateAndTimeState extends State<DateAndTime> {
   DateTime _selectedDateTime = DateTime.now();
   int _selectedHours = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedDateTime = DateTime.now(); // Initialize with current date and time
+  }
 
   void _updateSelectedDateTime(DateTime newDateTime) {
     setState(() {
@@ -59,34 +67,36 @@ class DateAndTimeState extends State<DateAndTime> {
   }
 
   void _selectDateTime(BuildContext context) async {
-    DateTime? pickedDateTime = await showCupertinoModalPopup(
+    DateTime now = DateTime.now();
+    DateTime? pickedDate = await showDatePicker(
       context: context,
-      builder: (context) {
-        return _buildCupertinoDatePicker(context);
-      },
+      initialDate: _selectedDateTime,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2101),
     );
 
-    if (pickedDateTime != null) {
-      _updateSelectedDateTime(pickedDateTime);
+    if (pickedDate != null) {
+      // ignore: use_build_context_synchronously
+      TimeOfDay? pickedTime = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.fromDateTime(now));
+
+
+      if (pickedTime != null) {
+        _updateSelectedDateTime(DateTime(
+          pickedDate.year,
+          pickedDate.month,
+          pickedDate.day,
+          pickedTime.hour,
+          pickedTime.minute,
+        ));
+      }
     }
   }
 
-  Widget _buildCupertinoDatePicker(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).copyWith().size.height / 3,
-      color: Colors.white,
-      child: CupertinoDatePicker(
-        mode: CupertinoDatePickerMode.dateAndTime,
-        initialDateTime: _selectedDateTime,
-        onDateTimeChanged: (DateTime newDateTime) {
-          _updateSelectedDateTime(newDateTime);
-        },
-      ),
-    );
-  }
-
   String _formatDateTime(DateTime dateTime) {
-    String formattedDateTime = DateFormat('MMMM d,  h:mm a').format(dateTime);
+    String formattedDateTime =
+    DateFormat('MMMM d,  h:mm a').format(dateTime);
     return formattedDateTime;
   }
 
@@ -124,7 +134,10 @@ class DateAndTimeState extends State<DateAndTime> {
             onTap: () => _selectDateTime(context),
             child: Text(
               _formatDateTime(_selectedDateTime),
-              style: const TextStyle(fontSize: 24, color: Colors.blue,fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  fontSize: 24,
+                  color: Colors.blue,
+                  fontWeight: FontWeight.bold),
             ),
           ),
           _buildTimeSelectionContainer(),
@@ -134,7 +147,6 @@ class DateAndTimeState extends State<DateAndTime> {
       ),
     );
   }
-
 
   Widget _buildSelectDateTimeButton() {
     return Padding(
@@ -181,7 +193,6 @@ class DateAndTimeState extends State<DateAndTime> {
               },
             ),
             const SizedBox(height: 10),
-
             Text(
               'Total Amount: ₹${_selectedHours * 30}',
               style: const TextStyle(fontSize: 20),
@@ -191,7 +202,6 @@ class DateAndTimeState extends State<DateAndTime> {
       ),
     );
   }
-
 
   Widget _buildButtons() {
     return Row(
@@ -215,17 +225,47 @@ class DateAndTimeState extends State<DateAndTime> {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
+            if(_selectedHours != 0){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
                   builder: (context) => VehicleDetailsPage(
-                    amountToPass: _selectedHours*30,
-                  lotName: widget.lotName,
-                  reserved: _selectedDateTime,
-                  hours: _selectedHours,
+                    amountToPass: _selectedHours * 30,
+                    lotName: widget.lotName,
+                    reserved: _selectedDateTime,
+                    hours: _selectedHours,
                     lotId: widget.lotId,
-                  )),
-            );
+                  ),
+                ),
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Please Select Hours.'),
+                    actions: [
+                      const SizedBox(height: 50,),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.purple,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                          ),
+                          child: const Text('OK',style: TextStyle(fontWeight: FontWeight.bold),),
+                        ),
+                      )
+                    ],
+                  );
+                },
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.black,

@@ -3,8 +3,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
-import 'package:smartparkin1/HomePage.dart';
-import 'package:smartparkin1/signin.dart';
+import 'package:provider/provider.dart';
+import 'HomePage.dart';
+import 'signin.dart';
+import 'theme_provider.dart';
 import 'profile_page.dart';
 import 'forward_button.dart';
 import 'setting_item.dart';
@@ -19,7 +21,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  bool isDarkMode = false;
+
   final Logger logger = Logger();
 
   void _logout(BuildContext context) async {
@@ -39,13 +41,8 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-
-      home: Scaffold(
+    bool isDarkMode = context.watch<ThemeProvider>().themeMode == ThemeMode.dark;
+    return Scaffold(
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
@@ -95,36 +92,35 @@ class SettingsPageState extends State<SettingsPage> {
                 const SizedBox(height: 20),
                 SizedBox(
                   width: double.infinity,
-                  child: Row(
-                    children: [
-                      Image.asset('assets/images/avatar3.png', width: 55, height: 55),
-                      const SizedBox(width: 20),
-                      const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "User",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ProfilePage())
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Image.asset('assets/images/avatar3.png', width: 55, height: 55),
+                        const SizedBox(width: 20),
+                        const Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "User",
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          ),
-                          SizedBox(height: 10),
-                        ],
-                      ),
-                      const Spacer(),
-                      ForwardButton(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const ProfilePage(),
-                            ),
-                          );
-                        },
-                      )
-                    ],
-                  ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                        const Spacer(),
+                        const ForwardButton()
+                      ],
+                    ),
+                  )
                 ),
                 const SizedBox(height: 40),
                 const Text(
@@ -159,9 +155,7 @@ class SettingsPageState extends State<SettingsPage> {
                   iconColor: Colors.white,
                   value: isDarkMode,
                   onTap: (value) {
-                    setState(() {
-                      isDarkMode = value;
-                    });
+                    context.read<ThemeProvider>().setDarkMode(value);
                   },
                 ),
                 const SizedBox(height: 20),
@@ -195,7 +189,6 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
-      ),
     );
   }
 }

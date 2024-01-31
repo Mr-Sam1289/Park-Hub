@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:logger/logger.dart';
 import 'package:smartparkin1/HomePage.dart';
 import 'signup.dart';
@@ -22,6 +23,7 @@ class SignInPageState extends State<SignInPage> {
   final _firebaseAuth = FirebaseAuth.instance;
 
   bool _isPasswordVisible = false;
+  bool resetPassword = false;
 
   @override
   void dispose() {
@@ -34,19 +36,13 @@ class SignInPageState extends State<SignInPage> {
     final email = _emailController.text.trim();
     try {
       await _firebaseAuth.sendPasswordResetEmail(email: email);
+      resetPassword =true;
       // Display a success message to the user
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Password reset email sent. Check your inbox.'),
-        ),
-      );
+      showSnackBar(context,'Password reset email sent. Check your inbox.');
     } catch (e) {
+      resetPassword = false;
       logger.i('Error sending password reset email: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('An error occurred. Please try again later.'),
-        ),
-      );
+      showSnackBar(context,'An error occurred. Please try again later.');
     }
   }
 
@@ -57,6 +53,12 @@ class SignInPageState extends State<SignInPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
+        if (resetPassword == true){
+          final FirebaseFirestore firestore = FirebaseFirestore.instance;
+          await firestore.collection('Users').doc(_emailController.text).update({
+            'password': _passwordController.text,
+          });
+        }
         // If sign-up is successful, navigate to the SignInPage
         Navigator.pushReplacement(
           context,
@@ -65,17 +67,11 @@ class SignInPageState extends State<SignInPage> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No user found for that email.')),
-        );
+        showSnackBar(context, 'No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Wrong password provided for that user.')),
-        );
+        showSnackBar(context, 'Wrong password provided for that user.');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred during sign-in.')),
-        );
+        showSnackBar(context, 'An error occurred during sign-in.');
       }
     }
   }
@@ -173,6 +169,7 @@ class SignInPageState extends State<SignInPage> {
         ),
       ),
       style: const TextStyle(fontSize: 20.0),
+      textCapitalization: TextCapitalization.words,
       validator: (value) {
         if (value == null || value.isEmpty) {
           return 'Please enter a password';
@@ -231,4 +228,27 @@ class SignInPageState extends State<SignInPage> {
       ),
     );
   }
+
+
+
+  void showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 16.0,
+          ),
+        ),
+        backgroundColor: Colors.blue.shade300, // Adjust the color as needed
+        duration: const Duration(seconds: 3),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0), // Adjust the radius as needed
+        ),
+      ),
+    );
+  }
+
+
 }

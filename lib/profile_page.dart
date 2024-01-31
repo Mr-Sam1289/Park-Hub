@@ -1,15 +1,13 @@
-// ignore_for_file: use_build_context_synchronously
 
-import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:logger/logger.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'package:smartparkin1/settings_page.dart';
 
-import 'edit_item.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -19,13 +17,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class ProfilePageState extends State<ProfilePage> {
-  final Logger logger = Logger();
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   late TextEditingController _userNameController;
   late TextEditingController _mobileController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  late String? _image;
 
   bool _isPasswordObscured = true;
 
@@ -41,8 +39,9 @@ class ProfilePageState extends State<ProfilePage> {
     _passwordController = TextEditingController();
     _mobileController = TextEditingController();
     _emailController = TextEditingController();
+    _image = 'https://img.freepik.com/premium-vector/avatar-flat-icon-human-white-glyph-blue-background_822686-239.jpg';
 
-    // Fetch user details from Firestore when the screen is initialized
+
     _currentUser = _auth.currentUser;
     if (_currentUser != null) {
       getDocId(_currentUser!.email!);
@@ -65,264 +64,295 @@ class ProfilePageState extends State<ProfilePage> {
           _userNameController.text = userDoc['userName'].toString();
           _emailController.text = userDoc['email'];
           _mobileController.text = userDoc['mobileNumber'];
-          _pickedImage = userDoc['profilePicture'] != null ? File(userDoc['profilePicture']) : null;
+          _image = userDoc['profilePicture'];
+
         });
       }
     } catch (error) {
-      logger.i('Error fetching user details: $error');
+      print('Error fetching user details: $error');
     }
   }
 
-  File? _pickedImage;
 
-  Future<void> _pickImage() async {
-    try {
-      final ImagePicker picker = ImagePicker();
-      final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
-      if (pickedFile != null) {
-        setState(() {
-          _pickedImage = File(pickedFile.path);
-        });
-      }
-    } catch (error) {
-      logger.i('Error picking image: $error');
-      // Handle error gracefully, e.g., show a snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error picking image. Please try again.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
-  }
-
-  Future<String?> _uploadImage() async {
-    if (_pickedImage == null) return null;
-
-    try {
-      String storagePath = 'gs://smartparking-79613.appspot.com/profilePictures/${_currentUser?.email ?? ''}';
-      UploadTask uploadTask = FirebaseStorage.instance.ref(storagePath).putFile(_pickedImage!);
-
-      TaskSnapshot taskSnapshot = await uploadTask.whenComplete(() {});
-
-      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-
-      // Update the user document with the new image URL
-      await FirebaseFirestore.instance
-          .collection('Users')
-          .doc(_currentUser?.email)
-          .update({'profilePicture': downloadUrl});
-
-      return downloadUrl;
-    } catch (error) {
-      logger.i('Error uploading image: $error');
-      // Handle error gracefully, e.g., show a snackbar
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Error uploading image. Please try again.'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return null;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Theme(
-      data: ThemeData(
-        primaryColor: Colors.blue,
-        hintColor: Colors.lightBlueAccent,
-        fontFamily: 'Roboto',
-      ),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
-          ),
-          leadingWidth: 80,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.blue.shade900, Colors.blue.shade500],
+  Widget _buildEditItem(String title, TextEditingController controller) {
+    return EditItem(
+      title: "",
+      widget: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              enabled: false,
+              style: const TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.w400),
+              decoration: InputDecoration(
+                labelText: title,
+                labelStyle: const TextStyle(color: Colors.black45,fontWeight: FontWeight.bold),
               ),
             ),
           ),
-          title: const Text(
-            "Profile",
-            style: TextStyle(color: Colors.white),
-          ),
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15.0),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset: const Offset(0, 3),
-                ),
-              ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPasswordItem(String title, TextEditingController controller) {
+    return EditItem(
+      title: "",
+      widget: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller,
+              obscureText: _isPasswordObscured,
+              enabled: false,
+              style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                labelText: title,
+                labelStyle: const TextStyle(color: Colors.grey,fontWeight: FontWeight.bold),
+              ),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    "Account",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blue,
+          ),
+          IconButton(
+            icon: Icon(
+              _isPasswordObscured
+                  ? Icons.visibility
+                  : Icons.visibility_off,
+              color: Colors.grey,
+            ),
+            onPressed: () {
+              setState(() {
+                _isPasswordObscured = !_isPasswordObscured;
+              });
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showLargerImage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.transparent, // Set a transparent background
+          content: SizedBox(
+            width: 200,
+            height: 200,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 50.0, sigmaY: 50.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5), // Adjust the opacity as needed
+                  shape: BoxShape.circle,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Hero(
+                      tag: "user_photo",
+                      child: Material(
+                        color: Colors.transparent,
+                        child: CircleAvatar(
+                          radius: 100,
+                          backgroundColor: Colors.white, // Add a background color
+                          foregroundColor: Colors.blue, // Add a border color
+                          child: CircleAvatar(
+                            radius: 98, // Adjust the inner circle size to add a border effect
+                            backgroundImage: NetworkImage(_image!),
+
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+    _image ??= 'https://img.freepik.com/premium-vector/avatar-flat-icon-human-white-glyph-blue-background_822686-239.jpg';
+    return Scaffold(
+
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade900,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const SettingsPage()),
+            );
+          },
+          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+        ),
+        leadingWidth: 80,
+        title: const Text(
+          "Profile",
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditProfilePage(
+                    firstName: _firstNameController.text,
+                    lastName: _lastNameController.text,
+                    userName: _userNameController.text,
+                    mobile: _mobileController.text,
+                    email: _emailController.text,
+                  ),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+            ),
+            child: const Text("Edit"),
+          ),
+          const SizedBox(width: 30,)
+        ],
+      ),
+        body: Stack(
+          children: [
+            Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blue.shade900, Colors.blue.shade500],
                     ),
                   ),
-                  const SizedBox(height: 40),
-                  EditItem(
-                    title: "Photo",
-                    widget: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: _pickImage,
-                          child: Hero(
-                            tag: "user_photo",
-                            child: Container(
-                              height: 100,
-                              width: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  image: _pickedImage != null
-                                      ? FileImage(_pickedImage!)
-                                      : const AssetImage("assets/images/avatar3.png") as ImageProvider<Object>,
-                                  fit: BoxFit.cover,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 30),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(width: 30,),
+                          GestureDetector(
+                            onTap: _showLargerImage,
+                            child: Hero(
+                              tag: "user_photo",
+                              child: Material(
+                                color: Colors.transparent,
+                                child: CircleAvatar(
+                                  radius: 70,
+                                  backgroundColor: Colors.white, // Add a background color
+                                  foregroundColor: Colors.blue, // Add a border color
+                                  child: CircleAvatar(
+                                    radius: 68, // Adjust the inner circle size to add a border effect
+                                    backgroundImage: _image != null ? NetworkImage(_image!) : const AssetImage('assets/images/avatar3.png') as ImageProvider,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          onPressed: _pickImage,
-                          style: TextButton.styleFrom(
-                            foregroundColor: Colors.lightBlueAccent,
-                          ),
-                          child: const Text("Upload Image"),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "First Name",
-                    widget: TextField(
-                      controller: _firstNameController,
-                      enabled: false,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "Last Name",
-                    widget: TextField(
-                      controller: _lastNameController,
-                      enabled: false,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "User Name",
-                    widget: TextField(
-                      controller: _userNameController,
-                      enabled: false,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "Email",
-                    widget: TextField(
-                      controller: _emailController,
-                      enabled: false,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "Mobile",
-                    widget: TextField(
-                      controller: _mobileController,
-                      enabled: false,
-                      style: const TextStyle(color: Colors.black),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  EditItem(
-                    title: "Password",
-                    widget: Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _passwordController,
-                            obscureText: _isPasswordObscured,
-                            enabled: false,
-                            style: const TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            _isPasswordObscured
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                            color: Colors.grey,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordObscured = !_isPasswordObscured;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  // ... Other form fields
-                  const SizedBox(height: 40),
-                  Center(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // Handle edit profile logic here
-                        String? imageUrl = await _uploadImage();
-                        if (imageUrl != null) {
-                          // Do something with the imageUrl, e.g., update Firestore
-                          // Example: updateFirestore(imageUrl);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
+                          const SizedBox(width: 20), // Add some horizontal space here
+                        ],
                       ),
-                      child: const Text("Edit Profile"),
-                    ),
+
+                    ],
                   ),
-                ],
+                )
+            ),
+            Positioned(
+              top: 200.0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      _buildEditItem("First Name", _firstNameController),
+                      _buildEditItem("Last Name", _lastNameController),
+                      _buildEditItem("User Name", _userNameController),
+                      _buildEditItem("Email", _emailController),
+                      _buildEditItem("Mobile", _mobileController),
+                      _buildPasswordItem("Password", _passwordController),
+                    ],
+                  ),
+                ),
               ),
             ),
+          ],
+        )
+        );
+
+  }
+}
+
+
+class EditItem extends StatelessWidget {
+  final String title;
+  final Widget widget;
+
+  const EditItem({
+    super.key,
+    required this.title,
+    required this.widget,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
         ),
-      ),
+
+        Align(
+          alignment: Alignment.center,
+          child: widget,
+        ),
+
+      ],
     );
   }
 }
+
+
+
