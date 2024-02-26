@@ -87,115 +87,135 @@ class InvoicePageState extends State<InvoicePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => PaymentScreen(
-                    amountToPay: 0.0,
-                    lotName: '',
-                    reserved: DateTime(2004),
-                    hours: 0,
-                    selectedVehicleType: '',
-                    selectedVehicleNumber: '',
-                    slot: '',
-                  lotId: '',
-                )
-              ),
-            );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
-        ),
-        leadingWidth: 80,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
-            ),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => PaymentScreen(
+            amountToPay: 0.0,
+            selectedVehicleType:'',
+            selectedVehicleNumber: '',
+            hours: 0,
+            reserved:DateTime(2004),
+            lotName:'',
+            slot: '',
+            lotId: '',
           ),
-        ),
-        title: const Text(
-          "Invoice",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.indigo.shade200, Colors.indigo.shade100],
-            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(1.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Card(
-                  elevation: 5,
-                  shadowColor: Colors.black,
-                  margin: const EdgeInsets.all(10),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Invoice #$invoiceNumber',
-                          style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.indigo),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
-                          style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
-                        ),const SizedBox(height: 10),
-                        Text(
-                          'Time: ${DateFormat('hh:mm a').format(DateTime.now())}',
-                          style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 20),
-                        buildInvoiceDetails(),
-                        const SizedBox(height: 20),
-                        const Divider(color: Colors.grey),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        buildTotalAmount(),
-                        const SizedBox(width: 100,),
-                        ElevatedButton(
-                          onPressed: () {
-                            _saveInvoice();
-                            Navigator.pushReplacement(
-                                context,
-                            MaterialPageRoute(builder: (context) => const HomePage()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                          ),
-                          child: const Text("Save"),
-                        ),
-
-                      ],
-                    ),
-                  ]
-                    ),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+        child: Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaymentScreen(
+                        amountToPay: 0.0,
+                        lotName: '',
+                        reserved: DateTime(2004),
+                        hours: 0,
+                        selectedVehicleType: '',
+                        selectedVehicleNumber: '',
+                        slot: '',
+                        lotId: '',
+                      )
+                  ),
+                );
+              },
+              icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
+            ),
+            leadingWidth: 80,
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Colors.blue.shade900, Colors.blue.shade500],
                 ),
-                )
-              ],
+              ),
+            ),
+            title: const Text(
+              "Invoice",
+              style: TextStyle(color: Colors.white),
             ),
           ),
-        ),
-      );
+          body: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.indigo.shade200, Colors.indigo.shade100],
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(1.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    elevation: 5,
+                    shadowColor: Colors.black,
+                    margin: const EdgeInsets.all(10),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Invoice #$invoiceNumber',
+                              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.indigo),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Date: ${DateFormat('dd-MM-yyyy').format(DateTime.now())}',
+                              style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
+                            ),const SizedBox(height: 10),
+                            Text(
+                              'Time: ${DateFormat('hh:mm a').format(DateTime.now())}',
+                              style: const TextStyle(fontSize: 16, color: Colors.blueAccent,fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(height: 20),
+                            buildInvoiceDetails(),
+                            const SizedBox(height: 20),
+                            const Divider(color: Colors.grey),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                buildTotalAmount(),
+                                const SizedBox(width: 100,),
+                                ElevatedButton(
+                                  onPressed: () {
+                                    _saveInvoice();
+                                    Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const HomePage()));
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.black,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                  ),
+                                  child: const Text("Save"),
+                                ),
+
+                              ],
+                            ),
+                          ]
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        )
+    );
 
   }
 

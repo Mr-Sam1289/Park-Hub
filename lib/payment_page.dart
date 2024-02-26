@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:logger/logger.dart';
@@ -38,6 +39,9 @@ class PaymentScreenState extends State<PaymentScreen> {
   final UpiIndia _upiIndia = UpiIndia();
   List<UpiApp>? apps;
 
+  String invoiceNumber = DateTime.now().millisecondsSinceEpoch.toString();
+
+
   TextStyle header = const TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.bold,
@@ -65,7 +69,7 @@ class PaymentScreenState extends State<PaymentScreen> {
       app: app,
       receiverUpiId: "abhisheksam1289@okaxis",
       receiverName: 'M ABHISHEK',
-      transactionRefId: 'PARK HUB',
+      transactionRefId: invoiceNumber,
       transactionNote: 'Amount for parking',
       amount: widget.amountToPay,
     );
@@ -208,98 +212,116 @@ class PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SelectSlotPage(
-                  lotName: '',
-                  reserved: DateTime(2004),
-                  hours: 0,
-                  selectedVehicleType: '',
-                  selectedVehicleNumber: '',
-                  amountToPass: 0.0,
-                  lotId: '',
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SelectSlotPage(
+            amountToPass:0.0,
+            selectedVehicleType: '',
+            selectedVehicleNumber:'',
+            reserved: DateTime(2004),
+            lotName:'',
+            hours: 0,
+            lotId: '',
+          ),),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectSlotPage(
+                    lotName: '',
+                    reserved: DateTime(2004),
+                    hours: 0,
+                    selectedVehicleType: '',
+                    selectedVehicleNumber: '',
+                    amountToPass: 0.0,
+                    lotId: '',
+                  ),
                 ),
+              );
+            },
+            icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+          ),
+          leadingWidth: 80,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
               ),
-            );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
-        ),
-        leadingWidth: 80,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
             ),
           ),
-        ),
-        title: const Text(
-          "Payments",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: displayUpiApps(),
+          title: const Text(
+            "Payments",
+            style: TextStyle(color: Colors.white),
           ),
-          Expanded(
-            child: FutureBuilder(
-              future: _transaction,
-              builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        _upiErrorHandler(snapshot.error.runtimeType),
-                        style: header,
-                      ), // Print's text message on screen
+        ),
+        body: Column(
+          children: <Widget>[
+            Expanded(
+              child: displayUpiApps(),
+            ),
+            Expanded(
+              child: FutureBuilder(
+                future: _transaction,
+                builder: (BuildContext context, AsyncSnapshot<UpiResponse> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Center(
+                        child: Text(
+                          _upiErrorHandler(snapshot.error.runtimeType),
+                          style: header,
+                        ), // Print's text message on screen
+                      );
+                    }
+
+                    // If we have data then definitely we will have UpiResponse.
+                    // It cannot be null
+                    UpiResponse upiResponse = snapshot.data!;
+
+                    // Data in UpiResponse can be null. Check before printing
+                    String txnId = upiResponse.transactionId ?? 'N/A';
+                    String resCode = upiResponse.responseCode ?? 'N/A';
+                    String txnRef = upiResponse.transactionRefId ?? 'N/A';
+                    String status = upiResponse.status ?? 'N/A';
+                    String approvalRef = upiResponse.approvalRefNo ?? 'N/A';
+                    _checkTxnStatus(status);
+
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          displayTransactionData('Transaction Id', txnId),
+                          displayTransactionData('Response Code', resCode),
+                          displayTransactionData('Reference Id', txnRef),
+                          displayTransactionData('Status', status.toUpperCase()),
+                          displayTransactionData('Approval No', approvalRef),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const Center(
+                      child: Text(''),
                     );
                   }
-
-                  // If we have data then definitely we will have UpiResponse.
-                  // It cannot be null
-                  UpiResponse upiResponse = snapshot.data!;
-
-                  // Data in UpiResponse can be null. Check before printing
-                  String txnId = upiResponse.transactionId ?? 'N/A';
-                  String resCode = upiResponse.responseCode ?? 'N/A';
-                  String txnRef = upiResponse.transactionRefId ?? 'N/A';
-                  String status = upiResponse.status ?? 'N/A';
-                  String approvalRef = upiResponse.approvalRefNo ?? 'N/A';
-                  _checkTxnStatus(status);
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        displayTransactionData('Transaction Id', txnId),
-                        displayTransactionData('Response Code', resCode),
-                        displayTransactionData('Reference Id', txnRef),
-                        displayTransactionData('Status', status.toUpperCase()),
-                        displayTransactionData('Approval No', approvalRef),
-                      ],
-                    ),
-                  );
-                } else {
-                  return const Center(
-                    child: Text(''),
-                  );
-                }
-              },
+                },
+              ),
             ),
-          ),
-          Center(
-            child: _buildInvoiceButton(),),
-          const SizedBox(height: 50,)
-        ],
+            Center(
+              child: _buildInvoiceButton(),),
+            const SizedBox(height: 50,)
+          ],
+        ),
       ),
     );
   }

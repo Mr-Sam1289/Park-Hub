@@ -184,138 +184,147 @@ class ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     _image ??= 'https://img.freepik.com/premium-vector/avatar-flat-icon-human-white-glyph-blue-background_822686-239.jpg';
-    return Scaffold(
-
-      appBar: AppBar(
-        backgroundColor: Colors.blue.shade900,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const SettingsPage()),
-            );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
-        ),
-        leadingWidth: 80,
-        title: const Text(
-          "Profile",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfilePage(
-                    firstName: _firstNameController.text,
-                    lastName: _lastNameController.text,
-                    userName: _userNameController.text,
-                    mobile: _mobileController.text,
-                    email: _emailController.text,
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const SettingsPage()),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.blue.shade900,
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsPage()),
+                );
+              },
+              icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+            ),
+            leadingWidth: 80,
+            title: const Text(
+              "Profile",
+              style: TextStyle(color: Colors.white),
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        userName: _userNameController.text,
+                        mobile: _mobileController.text,
+                        email: _emailController.text,
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                 ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
+                child: const Text("Edit"),
               ),
-            ),
-            child: const Text("Edit"),
+              const SizedBox(width: 30,)
+            ],
           ),
-          const SizedBox(width: 30,)
-        ],
-      ),
-        body: Stack(
-          children: [
-            Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Colors.blue.shade900, Colors.blue.shade500],
+          body: Stack(
+            children: [
+              Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Colors.blue.shade900, Colors.blue.shade500],
+                      ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(width: 30,),
-                          GestureDetector(
-                            onTap: _showLargerImage,
-                            child: Hero(
-                              tag: "user_photo",
-                              child: Material(
-                                color: Colors.transparent,
-                                child: CircleAvatar(
-                                  radius: 70,
-                                  backgroundColor: Colors.white, // Add a background color
-                                  foregroundColor: Colors.blue, // Add a border color
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 30),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(width: 30,),
+                            GestureDetector(
+                              onTap: _showLargerImage,
+                              child: Hero(
+                                tag: "user_photo",
+                                child: Material(
+                                  color: Colors.transparent,
                                   child: CircleAvatar(
-                                    radius: 68, // Adjust the inner circle size to add a border effect
-                                    backgroundImage: _image != null ? NetworkImage(_image!) : const AssetImage('assets/images/avatar3.png') as ImageProvider,
+                                    radius: 70,
+                                    backgroundColor: Colors.white, // Add a background color
+                                    foregroundColor: Colors.blue, // Add a border color
+                                    child: CircleAvatar(
+                                      radius: 68, // Adjust the inner circle size to add a border effect
+                                      backgroundImage: _image != null ? NetworkImage(_image!) : const AssetImage('assets/images/avatar3.png') as ImageProvider,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: 20), // Add some horizontal space here
-                        ],
-                      ),
+                            const SizedBox(width: 20), // Add some horizontal space here
+                          ],
+                        ),
 
+                      ],
+                    ),
+                  )
+              ),
+              Positioned(
+                top: 200.0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  padding: const EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
                     ],
                   ),
-                )
-            ),
-            Positioned(
-              top: 200.0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 5,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
 
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      _buildEditItem("First Name", _firstNameController),
-                      _buildEditItem("Last Name", _lastNameController),
-                      _buildEditItem("User Name", _userNameController),
-                      _buildEditItem("Email", _emailController),
-                      _buildEditItem("Mobile", _mobileController),
-                      _buildPasswordItem("Password", _passwordController),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        _buildEditItem("First Name", _firstNameController),
+                        _buildEditItem("Last Name", _lastNameController),
+                        _buildEditItem("User Name", _userNameController),
+                        _buildEditItem("Email", _emailController),
+                        _buildEditItem("Mobile", _mobileController),
+                        _buildPasswordItem("Password", _passwordController),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        )
-        );
+            ],
+          )
+      ),
+    );
 
   }
 }

@@ -301,44 +301,53 @@ class VehicleDetailsPageState extends State<VehicleDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const DateAndTime(lotName: '',lotId: '',),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DateAndTime(lotName: '', lotId: '')),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const DateAndTime(lotName: '',lotId: '',),
+                ),
+              );
+            },
+            icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
               ),
-            );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
             ),
           ),
+          title: const Text(
+            "Vehicle Details",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-        title: const Text(
-          "Vehicle Details",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            _buildYourVehiclesButton(),
-            // Display containers for each saved vehicle
-            for (Map<String, dynamic> vehicleDetails in userVehicleDetails)
-              _buildVehicleCard(vehicleDetails),
-            const SizedBox(height: 40,),
-            _buildNewVehicleCard(),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              _buildYourVehiclesButton(),
+              // Display containers for each saved vehicle
+              for (Map<String, dynamic> vehicleDetails in userVehicleDetails)
+                _buildVehicleCard(vehicleDetails),
+              const SizedBox(height: 40,),
+              _buildNewVehicleCard(),
+            ],
+          ),
         ),
       ),
     );

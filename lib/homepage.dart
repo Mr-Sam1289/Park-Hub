@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smartparkin1/MapsPage.dart';
 import 'package:smartparkin1/barrier_page.dart';
 import 'settings_page.dart';
@@ -55,25 +56,31 @@ class HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Colors.blue.shade900, Colors.blue.shade500],
+    return WillPopScope(
+      onWillPop: () async {
+        SystemNavigator.pop();
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Colors.blue.shade900, Colors.blue.shade500],
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 60),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 60),
                       Row(
                         children: [
                           const SizedBox(width: 30,),
@@ -114,83 +121,84 @@ class HomePageState extends State<HomePage> {
                       ),
 
                     ],
+                  ),
+                )
+            ),
+            // White Container with Rounded Edges
+            Positioned(
+              top: 200.0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(40),
+                    topRight: Radius.circular(40),
+                  ),
+                  color: Colors.white,
                 ),
-              )
-          ),
-                    // White Container with Rounded Edges
-                    Positioned(
-                      top: 200.0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40),
-                          ),
-                          color: Colors.white,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10.0,
-                                  vertical: 5.0,
-                                ),
-                              ),
-                              buildGestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const MapsPage()),
-                                  );
-                                },
-                                imageAsset: 'assets/images/ReserveParkingSpace.jpg',
-                                title: 'Reserve a parking space',
-                                trailingIcon: Icons.arrow_forward_ios_rounded,
-                              ),
-                              buildGestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const MyBookingsPage()),
-                                  );
-                                },
-                                imageAsset: 'assets/images/MyBookings.png',
-                                title: 'My Bookings',
-                                trailingIcon: Icons.arrow_forward_ios_rounded,
-                              ),
-                              buildGestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const SettingsPage()),
-                                  );
-                                },
-                                imageAsset: 'assets/images/settingsIcon.png',
-                                title: 'Settings',
-                                trailingIcon: Icons.arrow_forward_ios_sharp,
-                              ),
-                              buildGestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const Barrier()),
-                                  );
-                                },
-                                imageAsset: 'assets/images/parklio.jpg',
-                                title: 'Animation',
-                                trailingIcon: Icons.arrow_forward_ios_sharp,
-                              ),
-                            ],
-                          ),
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.0,
+                          vertical: 5.0,
                         ),
                       ),
-                    ),
-                  ],
+                      buildGestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MapsPage()),
+                          );
+                        },
+                        imageAsset: 'assets/images/ReserveParkingSpace.jpg',
+                        title: 'Reserve a parking space',
+                        trailingIcon: Icons.arrow_forward_ios_rounded,
+                      ),
+                      buildGestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const MyBookingsPage()),
+                          );
+                        },
+                        imageAsset: 'assets/images/MyBookings.png',
+                        title: 'My Bookings',
+                        trailingIcon: Icons.arrow_forward_ios_rounded,
+                      ),
+                      buildGestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const SettingsPage()),
+                          );
+                        },
+                        imageAsset: 'assets/images/settingsIcon.png',
+                        title: 'Settings',
+                        trailingIcon: Icons.arrow_forward_ios_sharp,
+                      ),
+                      buildGestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Barrier()),
+                          );
+                        },
+                        imageAsset: 'assets/images/parklio.jpg',
+                        title: 'Animation',
+                        trailingIcon: Icons.arrow_forward_ios_sharp,
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

@@ -170,180 +170,190 @@ class EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfilePage())
-            );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
-        ),
-        leadingWidth: 80,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage())
+              );
+            },
+            icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+          ),
+          leadingWidth: 80,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
+              ),
             ),
           ),
+          title: const Text(
+            "Edit Profile",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
-        title: const Text(
-          "Edit Profile",
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          key: _formKey,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Example: Edit first name
-            // Example: Edit first name
-            EditItem(
-              title: "",
-              widget: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  GestureDetector(
-                    onTap: _pickImage,
-                    child: Hero(
-                      tag: "user_photo",
-                      child: Container(
-                        height: 150,
-                        width: 150,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          //border: Border.all(color: Colors.blueAccent.shade100, width: 10),
-                          image: DecorationImage(
-                            image: _pickedImage != null
-                                ? FileImage(_pickedImage!)
-                                : _image != null
-                                ? NetworkImage(_image!)
-                                : const AssetImage('assets/placeholder_image.jpg') as ImageProvider, // Provide the path to a placeholder image
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        child: const Stack(
-                          alignment: Alignment.bottomCenter,
-                          children: [
-                            Positioned(
-                              right: -3,
-                              bottom: 8,
-                              child:
-                                Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.black,
-                                  size: 50,
-                                )
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            key: _formKey,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Example: Edit first name
+              // Example: Edit first name
+              EditItem(
+                title: "",
+                widget: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: Hero(
+                        tag: "user_photo",
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            //border: Border.all(color: Colors.blueAccent.shade100, width: 10),
+                            image: DecorationImage(
+                              image: _pickedImage != null
+                                  ? FileImage(_pickedImage!)
+                                  : _image != null
+                                  ? NetworkImage(_image!)
+                                  : const AssetImage('assets/placeholder_image.jpg') as ImageProvider, // Provide the path to a placeholder image
+                              fit: BoxFit.cover,
                             ),
-                          ],
+                          ),
+                          child: const Stack(
+                            alignment: Alignment.bottomCenter,
+                            children: [
+                              Positioned(
+                                  right: -3,
+                                  bottom: 8,
+                                  child:
+                                  Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.black,
+                                    size: 50,
+                                  )
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 10,),
-                  const Text(
-                    'Upload Image',
-                    style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
-                  )
-                ],
+                    const SizedBox(height: 10,),
+                    const Text(
+                      'Upload Image',
+                      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),
+                    )
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 30,),
-            TextField(
-              scrollPadding: const EdgeInsets.all(20),
-              controller: _editedFirstNameController,
-              decoration: const InputDecoration(
+              const SizedBox(height: 30,),
+              TextField(
+                scrollPadding: const EdgeInsets.all(20),
+                controller: _editedFirstNameController,
+                decoration: const InputDecoration(
                   labelText: "First Name",
                   labelStyle: TextStyle(color: Colors.blue,fontWeight: FontWeight.bold,fontSize: 20),
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.account_circle_outlined),
                   contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                ),
+                style: const TextStyle(fontSize: 20),
               ),
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            // Example: Edit last name
-            TextField(
-              controller: _editedLastNameController,
-              decoration: const InputDecoration(
+              const SizedBox(height: 20),
+              // Example: Edit last name
+              TextField(
+                controller: _editedLastNameController,
+                decoration: const InputDecoration(
                   labelText: "Last Name",
                   labelStyle: TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),
                   border: OutlineInputBorder(),
-                   prefixIcon: Icon(Icons.account_circle_outlined),
-                contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                  prefixIcon: Icon(Icons.account_circle_outlined),
+                  contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                ),
+                style: const TextStyle(fontSize: 20),
               ),
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            // Example: Edit first name
-            TextField(
-              controller: _editedUserNameController,
-              decoration: const InputDecoration(
+              const SizedBox(height: 20),
+              // Example: Edit first name
+              TextField(
+                controller: _editedUserNameController,
+                decoration: const InputDecoration(
                   labelText: "User Name",
-                labelStyle: TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),
+                  labelStyle: TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.account_circle),
-                contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-              ),
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            // Example: Edit first name
-            TextFormField(
-              controller: _editedMobileController,
-              decoration: const InputDecoration(
-                  labelText: "Mobile",
-                labelStyle: TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.mobile_friendly),
-                contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-              ),
-              style: const TextStyle(fontSize: 20),
-              keyboardType: TextInputType.phone,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-                LengthLimitingTextInputFormatter(10),
-              ],
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter your phone number';
-                } else if (value.length < 10) {
-                  return 'Please enter a valid mobile number';
-                }
-                return null;
-              },
-            ),
-
-            // ... add other fields for editing
-            const SizedBox(height: 30),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  _updateUserProfile();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ProfilePage())
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                 ),
-                child: const Text("Save"),
+                style: const TextStyle(fontSize: 20),
               ),
-            ),
-          ],
+              const SizedBox(height: 20),
+              // Example: Edit first name
+              TextFormField(
+                controller: _editedMobileController,
+                decoration: const InputDecoration(
+                  labelText: "Mobile",
+                  labelStyle: TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.mobile_friendly),
+                  contentPadding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                ),
+                style: const TextStyle(fontSize: 20),
+                keyboardType: TextInputType.phone,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(10),
+                ],
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your phone number';
+                  } else if (value.length < 10) {
+                    return 'Please enter a valid mobile number';
+                  }
+                  return null;
+                },
+              ),
+
+              // ... add other fields for editing
+              const SizedBox(height: 30),
+              Center(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _updateUserProfile();
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const ProfilePage())
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 30.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                  ),
+                  child: const Text("Save"),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

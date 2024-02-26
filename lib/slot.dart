@@ -23,12 +23,21 @@ class SelectSlotPageState extends State<SelectSlotPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) =>  VehicleDetailsPage(amountToPass: 0.0, lotName: '',reserved: DateTime(2004), hours: 0, lotId: '')),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+        child: Scaffold(
+          appBar: _buildAppBar(),
+          body: _buildBody(),
+        )
     );
   }
-
   AppBar _buildAppBar() {
     return AppBar(
       leading: IconButton(
@@ -128,10 +137,10 @@ class SelectSlotPageState extends State<SelectSlotPage> {
   Widget _buildVehicleImage() {
     // Map vehicle types to corresponding image assets
     final Map<String, String> vehicleTypeImages = {
-      'Car': 'assets/images/car1.jpg',
-      'Motorcycle': 'assets/images/motorcycle.jpg',
-      'Truck': 'assets/images/truck.jpg',
-      'Auto': 'assets/images/Auto.jpg',
+      'Car': 'assets/images/car1.png',
+      'Motorcycle': 'assets/images/motorcycle.png',
+      'Truck': 'assets/images/truck.png',
+      'Auto': 'assets/images/Auto.png',
     };
 
     // Get the selected vehicle type

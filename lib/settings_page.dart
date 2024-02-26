@@ -42,7 +42,16 @@ class SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode = context.watch<ThemeProvider>().themeMode == ThemeMode.dark;
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomePage()),
+          );
+          // Return true to allow back navigation, return false to prevent it
+          return false;
+        },
+      child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
@@ -91,36 +100,36 @@ class SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 20),
                 SizedBox(
-                  width: double.infinity,
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ProfilePage())
-                      );
-                    },
-                    child: Row(
-                      children: [
-                        Image.asset('assets/images/avatar3.png', width: 55, height: 55),
-                        const SizedBox(width: 20),
-                        const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "User",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ProfilePage())
+                        );
+                      },
+                      child: Row(
+                        children: [
+                          Image.asset('assets/images/avatar3.png', width: 55, height: 55),
+                          const SizedBox(width: 20),
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "User",
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                        const Spacer(),
-                        const ForwardButton()
-                      ],
-                    ),
-                  )
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                          const Spacer(),
+                          const ForwardButton()
+                        ],
+                      ),
+                    )
                 ),
                 const SizedBox(height: 40),
                 const Text(
@@ -189,6 +198,7 @@ class SettingsPageState extends State<SettingsPage> {
             ),
           ),
         ),
+      )
     );
   }
 }

@@ -36,7 +36,16 @@ class BarrierState extends State<Barrier> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+        onWillPop: () async {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+      // Return true to allow back navigation, return false to prevent it
+      return true;
+    },
+    child: Scaffold(
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
@@ -97,6 +106,7 @@ class BarrierState extends State<Barrier> {
           ),
         ],
       ),
+    ),
     );
   }
 }

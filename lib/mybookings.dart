@@ -24,56 +24,66 @@ class MyBookingsPageState extends State<MyBookingsPage> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-             Navigator.pushReplacement(
-               context,
-               MaterialPageRoute(builder: (context) => const HomePage()),
-             );
-          },
-          icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
-        ),
-        leadingWidth: 80,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+            },
+            icon: const Icon(Ionicons.chevron_back_outline, color: Colors.white),
+          ),
+          leadingWidth: 80,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
+              ),
             ),
           ),
+          title: const Text(
+            "My Bookings",
+            style: TextStyle(color: Colors.white),
+          ),
+          bottom: TabBar(
+            indicatorColor: Colors.white,
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.black,
+            tabs: const [
+              Tab(text: 'In Progress'),
+              Tab(text: 'Upcoming'),
+              Tab(text: 'Past'),
+            ],
+          ),
         ),
-        title: const Text(
-          "My Bookings",
-          style: TextStyle(color: Colors.white),
-        ),
-        bottom: TabBar(
-          indicatorColor: Colors.white,
-          controller: _tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.black,
-          tabs: const [
-            Tab(text: 'In Progress'),
-            Tab(text: 'Upcoming'),
-            Tab(text: 'Past'),
+        body: Column(
+          children: [
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildTabContent('In Progress'),
+                  _buildTabContent('Upcoming'),
+                  _buildTabContent('Past'),
+                ],
+              ),
+            ),
           ],
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                _buildTabContent('In Progress'),
-                _buildTabContent('Upcoming'),
-                _buildTabContent('Past'),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }

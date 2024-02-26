@@ -270,53 +270,63 @@ class MapsPageState extends State<MapsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: homeScaffoldKey,
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomePage(),
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return false;
+      },
+      child: Scaffold(
+        key: homeScaffoldKey,
+        appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(),
+                ),
+              );
+            },
+            icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
+          ),
+          leadingWidth: 80,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.blue.shade900, Colors.blue.shade500],
               ),
-            );
+            ),
+          ),
+          title: const Text(
+            "Maps",
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: _handlePressButton,
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(200.0, 10.0),
+                padding: const EdgeInsets.all(16.0),
+              ),
+              child: const Text("Search Parking Lots"),
+            ),
+          ],
+        ),
+        body: GoogleMap(
+          mapType: MapType.normal,
+          initialCameraPosition: _kGooglePlex,
+          markers: markersList,
+          onMapCreated: (GoogleMapController controller) {
+            _controller.complete(controller);
+            googleMapController = controller;
           },
-          icon: const Icon(Ionicons.chevron_back_outline,color: Colors.white,),
         ),
-        leadingWidth: 80,
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Colors.blue.shade900, Colors.blue.shade500],
-            ),
-          ),
-        ),
-        title: const Text(
-          "Maps",
-          style: TextStyle(color: Colors.white),
-        ),
-        actions: [
-          ElevatedButton(
-            onPressed: _handlePressButton,
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(200.0, 10.0),
-              padding: const EdgeInsets.all(16.0),
-            ),
-            child: const Text("Search Parking Lots"),
-          ),
-        ],
-      ),
-      body: GoogleMap(
-        mapType: MapType.normal,
-        initialCameraPosition: _kGooglePlex,
-        markers: markersList,
-        onMapCreated: (GoogleMapController controller) {
-          _controller.complete(controller);
-          googleMapController = controller;
-        },
       ),
     );
   }

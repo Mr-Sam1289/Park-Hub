@@ -102,12 +102,22 @@ class DateAndTimeState extends State<DateAndTime> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          _buildBackgroundContainer(),
-          _buildBottomContainer(context),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MapsPage()),
+        );
+        // Return true to allow back navigation, return false to prevent it
+        return true;
+      },
+      child: Scaffold(
+        body: Column(
+          children: [
+            _buildBackgroundContainer(),
+            _buildBottomContainer(context),
+          ],
+        ),
       ),
     );
   }
