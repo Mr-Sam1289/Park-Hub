@@ -27,31 +27,18 @@ This application not only helps users locate available parking spots but also in
    git clone https://github.com/Mr-Sam1289/Park-Hub
 
 ## Screenshots
+## Screenshots
 
-<div style="display: flex; flex-wrap: wrap; justify-content: space-between;">
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Home%20Screen.png" alt="Home Screen" width="100%" />
-  </div>
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" alt="Search Screen" width="100%" />
-  </div>
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" alt="Parking Spot Details" width="100%" />
-  </div>
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" alt="Reservation" width="100%" />
-  </div>
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" alt="Payment" width="100%" />
-  </div>
-
-  <div style="flex: 0 0 32%; padding: 5px;">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" alt="Invoice" width="100%" />
-  </div>
-
+<div align="center">
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Home%20Screen.png" alt="Home Screen" width="15%" style="margin: 10px;" />
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" alt="Search Screen" width="15%" style="margin: 10px;" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" alt="Parking Spot Details" width="15%" style="margin: 10px;" />
 </div>
+<div align="center">
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" alt="Reservation" width="15%" style="margin: 10px;" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" alt="Payment" width="15%" style="margin: 10px;" />
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" alt="Invoice" width="15%" style="margin: 10px;" />
+</div>
+
