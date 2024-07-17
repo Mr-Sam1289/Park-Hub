@@ -6,11 +6,11 @@ ParkHub is a mobile application designed to alleviate the common frustrations as
 This application not only helps users locate available parking spots but also integrates with smart city initiatives, enhancing the overall urban mobility experience. By providing adaptive parking solutions and smart payment options, ParkHub is set to transform how we approach parking in our daily lives.
 
 ## Table of Contents
-1. [Features](#features)
-2. [Technologies Used](#technologies-used)
-3. [Screenshots](#screenshots)
-4. [Documentation](#documentation)
-6. [Contact](#contact)
+1. [Features](#Features)
+2. [Technologies Used](#Technologies_Used)
+3. [Screenshots](#Screenshots)
+4. [Documentation](#Documentation)
+6. [Contact](#Contact)
 
 ## Features
 - **Adaptive Parking Solutions:** Tailored parking options based on user preferences and location.
@@ -23,6 +23,15 @@ This application not only helps users locate available parking spots but also in
 - **Reservation System:** Allows users to reserve parking spots in advance.
 - **Secured Transactions:** Guarantees the safety of all financial transactions.
 - **Parking Spot Availability:** Displays real-time availability of parking spots.
+
+## Installation
+
+To set up the ParkHub application locally for development, follow these steps:
+
+1. **Clone the repository:**  
+   ```bash
+   git clone https://github.com/Mr-Sam1289/Park-Hub.git
+
 
 ## Technologies Used
 - <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="20" height="20"/> </a> **Flutter:** For building a responsive and user-friendly cross-platform mobile application.
