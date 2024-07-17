@@ -34,11 +34,15 @@ This application not only helps users locate available parking spots but also in
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" alt="Search Screen" width="15%" style="margin: 10px;" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" alt="Parking Spot Details" width="15%" style="margin: 10px;" />
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Profile%20Screen.png" alt="Parking Spot Details" width="15%" style="margin: 10px;" />
 </div>
 <div align="center">
     <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" alt="Reservation" width="15%" style="margin: 10px;" />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" alt="Payment" width="15%" style="margin: 10px;" />
    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" alt="Invoice" width="15%" style="margin: 10px;" />
+   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+   <img src="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/APP%20Screens/Vehicles%20Screen.png" alt="Invoice" width="15%" style="margin: 10px;" />
 </div>
 
