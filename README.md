@@ -7,7 +7,7 @@ This application not only helps users locate available parking spots but also in
 
 ## Table of Contents
 1. [Features](#Features)
-2. [Technologies Used](#Technologies_Used)
+2. [Technologies Used](#Technologies-Used)
 3. [Screenshots](#Screenshots)
 4. [Documentation](#Documentation)
 6. [Contact](#Contact)
