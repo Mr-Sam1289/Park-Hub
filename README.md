@@ -10,7 +10,12 @@ This application not only helps users locate available parking spots but also in
 2. [Technologies Used](#Technologies-Used)
 3. [Screenshots](#Screenshots)
 4. [Documentation](#Documentation)
-6. [Contact](#Contact)
+5. [Contributing](#Contributing)
+6. [License](#License)
+7. [Future Work](#Future-Work)
+8. [Acknowledgments](#Acknowledgments)
+9. [Known Issues](#Known-Issues)
+10. [Contact](#Contact)
 
 ## Features
 - **Adaptive Parking Solutions:** Tailored parking options based on user preferences and location.
@@ -24,6 +29,10 @@ This application not only helps users locate available parking spots but also in
 - **Secured Transactions:** Guarantees the safety of all financial transactions.
 - **Parking Spot Availability:** Displays real-time availability of parking spots.
 
+## Technologies Used
+- <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="20" height="20"/> </a> **Flutter:** For building a responsive and user-friendly cross-platform mobile application.
+- <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="20" height="20"/> </a> **Firebase:** For real-time database management, authentication, and backend services.
+
 ## Installation
 
 To set up the ParkHub application locally for development, follow these steps:
@@ -31,11 +40,6 @@ To set up the ParkHub application locally for development, follow these steps:
 1. **Clone the repository:**  
    ```bash
    git clone https://github.com/Mr-Sam1289/Park-Hub.git
-
-
-## Technologies Used
-- <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="20" height="20"/> </a> **Flutter:** For building a responsive and user-friendly cross-platform mobile application.
-- <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="20" height="20"/> </a> **Firebase:** For real-time database management, authentication, and backend services.
 
 ## Screenshots
 <div align="center">
@@ -63,6 +67,29 @@ For more detailed information, refer to the following resources:
 - **[User Manual](https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/USER%20MANUAL.pdf)**: Instructions on how to use the application.
 - **[Presentation](https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Park%20Hub.pdf)**: Overview of the project and its features.
 
+## Contributing
+We welcome contributions to the ParkHub project! If you're interested in contributing, please follow these guidelines:
+1. **Fork the Repository**: Click the "Fork" button at the top right of the repository page.
+2. **Create a New Branch**: Use a descriptive name for your branch that reflects the feature or fix you're working on.
+3. **Make Your Changes**: Implement your changes and commit them with a clear message describing what you've done.
+4. **Push Your Branch**: Push your changes to your forked repository.
+5. **Submit a Pull Request**: Go to the original repository, click on "Pull Requests," and then "New Pull Request" to submit your changes for review.
+
+## License
+This project does not currently have a specified license. Feel free to use the code for personal projects, but please ensure you give appropriate credit where due.
+
+## Future Work
+We aim to enhance ParkHub with the following features:
+- **Dynamic Pricing**: Implementing pricing models that adjust based on demand and availability.
+- **Overall Optimization**: Improving algorithms for faster search results and better user experience.
+- **Enhanced User Profile Customization**: Allowing users to personalize their profiles and settings.
+
+## Acknowledgments
+- **Flutter**: For providing a robust framework for building the application.
+- **Firebase**: For offering comprehensive backend services to support real-time data management and authentication.
+
+## Known Issues
+- The map integration may not function correctly in offline mode.
 
 ## Contact
 For any inquiries or feedback, please contact [abhisamshek1212@gmail.com].
