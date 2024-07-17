@@ -8,7 +8,7 @@ This application not only helps users locate available parking spots but also in
 ## Table of Contents
 1. [Features](#Features)
 2. [Technologies Used](#Technologies-Used)
-3. [Screenshots](#Screenshots)
+3. [User Interface Overview](#User-Interface-Overview)
 4. [Documentation](#Documentation)
 5. [Contributing](#Contributing)
 6. [License](#License)
@@ -33,6 +33,7 @@ This application not only helps users locate available parking spots but also in
 - <a href="https://flutter.dev" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/flutterio/flutterio-icon.svg" alt="flutter" width="20" height="20"/> </a> **Flutter:** For building a responsive and user-friendly cross-platform mobile application.
 - <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="20" height="20"/> </a> **Firebase:** For real-time database management, authentication, and backend services.
 
+
 ## Installation
 
 To set up the ParkHub application locally for development, follow these steps:
@@ -41,31 +42,53 @@ To set up the ParkHub application locally for development, follow these steps:
    ```bash
    git clone https://github.com/Mr-Sam1289/Park-Hub.git
 
-## Screenshots
+## User Interface Overview
 <div align="center">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Home%20Screen.png" alt="Home Screen" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" alt="Search Screen" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" alt="Parking Spot Details" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Profile%20Screen.png" alt="Profile Screen" width="15%" style="margin: 10px;" />
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Home%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Home%20Screen.png" alt="Home Screen" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Maps%20Screen.png" alt="Search Screen" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Slot%20Screen.png" alt="Parking Spot Details" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Profile%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Profile%20Screen.png" alt="Profile Screen" width="15%" style="margin: 10px;" />
+    </a>
 </div>
+<br>
 <div align="center">
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" alt="Reservation" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" alt="Payment" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" alt="Invoice" width="15%" style="margin: 10px;" />
-   &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    <img src="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/APP%20Screens/Vehicles%20Screen.png" alt="Vehicles Screen" width="15%" style="margin: 10px;" />
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Select%20Slot%20Screen.png" alt="Reservation" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Payments%20Screen.png" alt="Payment" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Invoice%20Screen.png" alt="Invoice" width="15%" style="margin: 10px;" />
+    </a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    <a href="https://raw.githubusercontent.com/Mr-Sam1289/Park-Hub/my-new-branch/Docs/APP%20Screens/Vehicles%20Screen.png" target="_blank" rel="noreferrer">
+        <img src="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/APP%20Screens/Vehicles%20Screen.png" alt="Vehicles Screen" width="15%" style="margin: 10px;" />
+    </a>
 </div>
+
+## Firebase Database Images
+The following images provide a visual representation of the Firebase database structure used in the ParkHub project:
+
+<div align="center">
+    <img src="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Data%20Base/User.png" alt="User Details" width="45%" style="margin: 10px;" />
+   &nbsp; &nbsp; &nbsp;
+    <img src="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Data%20Base/Invoice%20details.png" alt="Invoive Details" width="45%" style="margin: 10px;" />
+</div>
+
 
 ## Documentation
 For more detailed information, refer to the following resources:
-- **[Project Documentation](https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Documentation.pdf)**: Comprehensive details about the project.
-- **[User Manual](https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/USER%20MANUAL.pdf)**: Instructions on how to use the application.
-- **[Presentation](https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Park%20Hub.pdf)**: Overview of the project and its features.
+- <a href="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Documentation.pdf" target="_blank" rel="noreferrer">Project Documentation</a>: Comprehensive details about the project.
+- <a href="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/USER%20MANUAL.pdf" target="_blank" rel="noreferrer">User Manual</a>: Instructions on how to use the application.
+- <a href="https://github.com/Mr-Sam1289/Park-Hub/blob/my-new-branch/Docs/Park%20Hub.pdf" target="_blank" rel="noreferrer">Presentation</a>: Overview of the project and its features.
+
 
 ## Contributing
 We welcome contributions to the ParkHub project! If you're interested in contributing, please follow these guidelines:
